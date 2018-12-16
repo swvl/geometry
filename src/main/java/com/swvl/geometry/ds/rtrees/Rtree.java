@@ -9,7 +9,6 @@ import java.io.DataOutput;
 import java.io.IOException;
 
 /**
- *
  * R-tree implementation. R-trees handles multi-dimensional data such as geometrical data.
  * The tree structure is represented by an array of nodes to optimize time complexity.
  *
@@ -17,22 +16,25 @@ import java.io.IOException;
  */
 public class Rtree implements Writable {
 
-    private int degree;
+    protected int degree;
 
-    private int height;
+    protected int height;
 
-    private int numNodes;
+    protected int numNodes;
 
-    private int numLeaves;
+    protected int numLeaves;
 
-    private Node[] tree;
+    protected Node[] tree;
 
-    private int numRecords;
+    protected int numRecords;
 
-    private int N;
+    protected int N;
 
-    private int[] range;
+    protected int[] range;
 
+    public Rtree() {
+
+    }
 
     public Rtree(int height, int degree) {
         this.degree = degree;
