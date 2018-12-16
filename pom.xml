@@ -22,7 +22,7 @@
 
 
     <name>Computational Geometry</name>
-    <description>Java project for geometrical algorithms and data structures</description>
+    <description>Java library for geometrical shapes, algorithms and data structures</description>
 
     <developers>
         <developer>
