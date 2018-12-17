@@ -91,5 +91,10 @@ public class Rtree implements Writable {
                 tree[i].fromText(tmp);
             }
         }
+
+        range = new int[degree];
+        range[0] = 1 - degree + 1;
+        for (int i = 1; i < degree; ++i)
+            range[i] = range[i - 1] + 1;
     }
 }
