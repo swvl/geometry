@@ -26,6 +26,14 @@ public class Polygon extends Shape {
     }
 
     public Polygon(Point[] points, int numPoints) {
+        /*
+         * check that number of points equal length of points after removing
+         * last vertex (duplicate of first vertex)
+         */
+        if (points.length - 1 != numPoints)
+            throw new IllegalArgumentException("Number of points must be equal length of " +
+                    "Array(Point) after removing last vertex (duplicate of first vertex)");
+
         this.points = points;
         this.numPoints = numPoints;
     }
@@ -64,9 +72,18 @@ public class Polygon extends Shape {
         return null;
     }
 
+    /**
+     * Calculates the centroid of the polygon's vertices (not guaranteed that centroid exist inside the polygon)
+     */
     @Override
     public Point getCenterPoint() {
-        return null;
+        double xSum = 0, ySum = 0;
+        for (Point point : points) {
+            xSum += point.x;
+            ySum += point.y;
+        }
+
+        return new Point(xSum / numPoints, ySum / numPoints);
     }
 
     @Override
@@ -98,4 +115,9 @@ public class Polygon extends Shape {
     public void fromText(Text text) {
 
     }
+
+
+//    private int distanceToLine(Point pt, Point a, Point b){
+//
+//    }
 }
