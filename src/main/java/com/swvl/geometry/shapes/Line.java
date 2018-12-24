@@ -78,13 +78,25 @@ public class Line extends Shape {
          * s = ||ap|| * cosθ =  dotProduct(ap, ab^) / ||ab^||
          * We use the unit vector of ab because magnitude of unit vector = 1
          */
-        double b = Math.abs(apx * ux + apy * uy);
+        double u = apx * ux + apy * uy;
 
-        /* Hypothesis of triangle apc where c is the projection of p on ab*/
-        double apMagnitude = Math.sqrt(apx * apx + apy * apy);
 
+        Point c;
         /* use pythagoras to calculate perpendicular distance between ap and ab*/
-        return Math.sqrt(apMagnitude * apMagnitude - b * b);
+        if (u < 0.0) // closer to a
+            return p.distanceTo(a); // Euclidean distance between p and a
+
+
+        if (u > 1.0)  // closer to b
+            return p.distanceTo(b); // Euclidean distance between p and b
+
+        /*
+         * Translate point a by a scaled magnitude u of vector ab
+         * (multiplying ab^ by u to get scaled vector in ab direction)
+         */
+        double cx = a.x + (ux * u);
+        double cy = a.y + (uy * u);
+        return p.distanceTo(new Point(cx, cy));
     }
 
     @Override
