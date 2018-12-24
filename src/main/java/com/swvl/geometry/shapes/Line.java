@@ -39,19 +39,23 @@ public class Line extends Shape {
          * Calculate the perpendicular vector, which is given by (-dy, dx)
          *
          * Math#ulp(double)} to compute the smallest non-zero thickness that
+         *
+         * Rotation Matrix r = {{cosθ, -sinθ}, {sinθ, cosθ}}
+         * px = dx*cos(90) - dy*sin(90) = 0 - dy = -dy
+         * py = dx*sin(90) + dy*cos(90) = dx + 0 = dx
          */
-        double thickness = Math.ulp(dy);
+        double px = -dy;
+        double py = dx;
 
         /* Scale the perpendicular vector by factor = thickness*/
-        double px = 0, py = 0;
-        if (dy == 0) { // horizontal line then perpendicular is given by (dx, -dy) (rotation 45 clockwise)
-            px = thickness * dx;
-            py = thickness * -dy;
-        } else if (dx == 0) { // vertical line then perpendicular is given by (-dx, dy)
-            // TODO
-        }
-        System.out.println(dx + " " + dy + " " + px + " " + py);
-        return new Rectangle(a.x - px, a.y - py, b.x + px, b.y + py);
+        double thickness = Math.ulp(dy);
+        px *= thickness;
+        py *= thickness;
+
+        /* We choose to fix the maxPoint. For fixing minPoint, maxPoint = (b.x + px, b.y = a.y + py) */
+        return new Rectangle(
+                a.x - px, a.y - py, // minPoint (bottom-left) is at the bottom-right of a
+                b.x, b.y); // the maxPoint (top-right) is fixed
     }
 
     @Override
@@ -105,22 +109,31 @@ public class Line extends Shape {
     }
 
     public static void main(String[] args) throws OperationNotSupportedException {
-        Point p1 = new Point(1, 2);
-        Point p2 = new Point(3, 2);
-        Line horizontalLine = new Line(p1, p2);
+        Point p11 = new Point(1, 2);
+        Point p21 = new Point(3, 2);
+        Line horizontalLine = new Line(p11, p21);
 
         Rectangle rect1 = horizontalLine.getMBR();
         System.out.println(rect1);
-        System.out.println(rect1.isIntersected(p1));
-        System.out.println(rect1.isIntersected(p2));
+        System.out.println(rect1.isIntersected(p11));
+        System.out.println(rect1.isIntersected(p21));
 
-        Point p11 = new Point(1, 1);
+        Point p12 = new Point(1, 1);
         Point p22 = new Point(1, 3);
-        Line verticalLine = new Line(p11, p22);
+        Line verticalLine = new Line(p12, p22);
 
         Rectangle rect2 = verticalLine.getMBR();
         System.out.println(rect2);
-        System.out.println(rect2.isIntersected(p1));
-        System.out.println(rect2.isIntersected(p2));
+        System.out.println(rect2.isIntersected(p12));
+        System.out.println(rect2.isIntersected(p22));
+
+        Point p13 = new Point(1, 1);
+        Point p23 = new Point(2, 7);
+        Line inclineLine = new Line(p13, p23);
+
+        Rectangle rect3 = inclineLine.getMBR();
+        System.out.println(rect3);
+        System.out.println(rect3.isIntersected(p13));
+        System.out.println(rect3.isIntersected(p23));
     }
 }
