@@ -60,7 +60,31 @@ public class Line extends Shape {
 
     @Override
     public double distanceTo(Point p) {
-        return 0;
+        /* transform line ap to vector*/
+        double apx = p.x - a.x;
+        double apy = p.y - a.y;
+
+        /* transform line ab to vector*/
+        double abx = b.x - a.x;
+        double aby = b.y - a.y;
+
+        /* Calculate unit vector ab^ of vector ab */
+        double vectorMagnitude = Math.sqrt(abx * abx + aby * aby);
+        double ux = abx / vectorMagnitude;
+        double uy = aby / vectorMagnitude;
+
+        /*
+         * Get the scalar projection b of vector ap on ab.
+         * s = ||ap|| * cosθ =  dotProduct(ap, ab^) / ||ab^||
+         * We use the unit vector of ab because magnitude of unit vector = 1
+         */
+        double b = Math.abs(apx * ux + apy * uy);
+
+        /* Hypothesis of triangle apc where c is the projection of p on ab*/
+        double apMagnitude = Math.sqrt(apx * apx + apy * apy);
+
+        /* use pythagoras to calculate perpendicular distance between ap and ab*/
+        return Math.sqrt(apMagnitude * apMagnitude - b * b);
     }
 
     @Override
@@ -135,5 +159,31 @@ public class Line extends Shape {
         System.out.println(rect3);
         System.out.println(rect3.isIntersected(p13));
         System.out.println(rect3.isIntersected(p23));
+
+
+        Point p1 = new Point(3, 3);
+        Point a1 = new Point(2, 1);
+        Point b1 = new Point(4, 1);
+        Line l1 = new Line(a1, b1);
+        System.out.println(l1.distanceTo(p1));
+
+        Point p2 = new Point(3, 3);
+        Point a2 = new Point(1, 2);
+        Point b2 = new Point(1, 4);
+        Line l2 = new Line(a2, b2);
+        System.out.println(l2.distanceTo(p2));
+
+        Point p3 = new Point(0, 2);
+        Point a3 = new Point(1, 2);
+        Point b3 = new Point(2, 4);
+        Line l3 = new Line(a3, b3);
+        System.out.println(l3.distanceTo(p3));
+
+
+        Point p4 = new Point(4, 2);
+        Point a4 = new Point(2, 1);
+        Point b4 = new Point(4, 1);
+        Line l4 = new Line(a4, b4);
+        System.out.println(l4.distanceTo(p4));
     }
 }
