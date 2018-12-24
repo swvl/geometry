@@ -111,7 +111,9 @@ public class Line extends Shape {
 
     @Override
     public Point getCenterPoint() {
-        return null;
+        return new Point(
+                (a.x + b.x) / 2,
+                (a.y + b.y) / 2);
     }
 
     @Override
@@ -178,18 +180,24 @@ public class Line extends Shape {
         Point b1 = new Point(4, 1);
         Line l1 = new Line(a1, b1);
         System.out.println(l1.distanceTo(p1));
+        System.out.println("Center Point => " + l1.getCenterPoint());
+        System.out.println();
 
         Point p2 = new Point(3, 3);
         Point a2 = new Point(1, 2);
         Point b2 = new Point(1, 4);
         Line l2 = new Line(a2, b2);
         System.out.println(l2.distanceTo(p2));
+        System.out.println("Center Point => " + l2.getCenterPoint());
+        System.out.println();
 
         Point p3 = new Point(0, 2);
         Point a3 = new Point(1, 2);
         Point b3 = new Point(2, 4);
         Line l3 = new Line(a3, b3);
         System.out.println(l3.distanceTo(p3));
+        System.out.println("Center Point => " + l3.getCenterPoint());
+        System.out.println();
 
 
         Point p4 = new Point(4, 2);
