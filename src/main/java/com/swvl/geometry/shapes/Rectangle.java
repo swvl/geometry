@@ -184,8 +184,17 @@ public class Rectangle extends Shape implements WritableComparable<Rectangle> {
                     && this.minPoint.y - rect.maxPoint.y < Point.EPS; // this.minPoint.y < rect.maxPoint.y
         }
 
+        /* For a line segment to intersect a rectangle,
+         * at least one of its end points should be inside the rectangle
+         */
+        if (shape instanceof Line) {
+            Line line = (Line) shape;
+            return this.isIntersected(line.startPoint) || this.isIntersected(line.endPoint);
+        }
+
         throw new OperationNotSupportedException("Contains operation in Rectangle does not support " + shape.getClass());
     }
+
 
     @Override
     public boolean isEdgeIntersection(Shape shape) throws OperationNotSupportedException {

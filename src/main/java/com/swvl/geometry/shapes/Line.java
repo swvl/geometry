@@ -8,26 +8,36 @@ import java.io.DataOutput;
 import java.io.IOException;
 
 public class Line extends Shape {
-    Point a; // Start point of line segment
-    Point b; // End point of line segment
-    double m; // slope
-    double c; // y-intercept
+    Point startPoint; // Start point of line segment
+    Point endPoint; // End point of line segment
+
+    /* Line equation params ax + by + c = 0*/
+    double a;
+    double b;
+    double c;
 
     public Line() {
 
     }
 
-    private void init(Point a, Point b) {
-        if (a.isSTE(b)) {
-            this.a = a;
-            this.b = b;
+    private void init(Point p1, Point p2) {
+        if (p1.x - p2.x < Point.EPS && p1.y - p2.y < Point.EPS) {
+            this.startPoint = p1;
+            this.endPoint = p2;
         } else {
-            this.a = b;
-            this.b = a;
+            this.startPoint = p2;
+            this.endPoint = p1;
         }
 
-        m = (b.y - a.y) / (b.x - a.x);
-        c = b.y - m * b.x;
+        if (Math.abs(p1.x - p2.x) < Point.EPS) { // vertical line
+            this.a = 1;
+            this.b = 0;
+            this.c = -p1.x;
+        } else {
+            this.a = -((endPoint.y - startPoint.y) / (endPoint.x - startPoint.x));
+            this.b = 1;  // fix value of b to 1
+            this.c = -(a * startPoint.x) - startPoint.y;
+        }
     }
 
     public Line(Point a, Point b) {
@@ -37,8 +47,8 @@ public class Line extends Shape {
     @Override
     public Rectangle getMBR() {
         /* Calculate vector of line */
-        double dx = Math.abs(b.x - a.x); //delta x
-        double dy = Math.abs(b.y - a.y); //delta y
+        double dx = Math.abs(endPoint.x - startPoint.x); //delta x
+        double dy = Math.abs(endPoint.y - startPoint.y); //delta y
 
         /* Calculate the unit vector (dx, dy) pointing in the direction of the line  */
         double vectorMagnitude = Math.sqrt(dx * dx + dy * dy);
@@ -64,19 +74,19 @@ public class Line extends Shape {
 
         /* We choose to fix the maxPoint. For fixing minPoint, maxPoint = (b.x + px, b.y = a.y + py) */
         return new Rectangle(
-                a.x - px, a.y - py, // minPoint (bottom-left) is at the bottom-right of a
-                b.x, b.y); // the maxPoint (top-right) is fixed
+                startPoint.x - px, startPoint.y - py, // minPoint (bottom-left) is at the bottom-right of a
+                endPoint.x, endPoint.y); // the maxPoint (top-right) is fixed
     }
 
     @Override
     public double distanceTo(Point p) {
         /* transform line ap to vector*/
-        double apx = p.x - a.x;
-        double apy = p.y - a.y;
+        double apx = p.x - startPoint.x;
+        double apy = p.y - startPoint.y;
 
         /* transform line ab to vector*/
-        double abx = b.x - a.x;
-        double aby = b.y - a.y;
+        double abx = endPoint.x - startPoint.x;
+        double aby = endPoint.y - startPoint.y;
 
         /* Calculate unit vector ab^ of vector ab */
         double vectorMagnitude = Math.sqrt(abx * abx + aby * aby);
@@ -94,18 +104,18 @@ public class Line extends Shape {
         Point c;
         /* use pythagoras to calculate perpendicular distance between ap and ab*/
         if (u < 0.0) // closer to a
-            return p.distanceTo(a); // Euclidean distance between p and a
+            return p.distanceTo(startPoint); // Euclidean distance between p and a
 
 
         if (u > 1.0)  // closer to b
-            return p.distanceTo(b); // Euclidean distance between p and b
+            return p.distanceTo(endPoint); // Euclidean distance between p and b
 
         /*
          * Translate point a by a scaled magnitude u of vector ab
          * (multiplying ab^ by u to get scaled vector in ab direction)
          */
-        double cx = a.x + (ux * u);
-        double cy = a.y + (uy * u);
+        double cx = startPoint.x + (ux * u);
+        double cy = startPoint.y + (uy * u);
         return p.distanceTo(new Point(cx, cy));
     }
 
@@ -127,14 +137,21 @@ public class Line extends Shape {
      */
     private boolean isPointIntersection(Point point) {
         /* Check that point is on line */
-        double y = m * point.x + c;
-        if (y != point.y) // point is not on the line
-            return false;
+        if (b != 0) {
+            double y = -(a * point.x) - c;
+
+            if (y != point.y) // point is not on the line
+                return false;
+        } else {
+            if (point.x != -c) // vertical line and x != -c
+                return false;
+        }
+
 
         /* Check if point is between a and b */
-        double ab = a.distanceTo(b);
-        double ap = a.distanceTo(point);
-        double pb = point.distanceTo(b);
+        double ab = startPoint.distanceTo(endPoint);
+        double ap = startPoint.distanceTo(point);
+        double pb = point.distanceTo(endPoint);
 
         /* point between a and b if dist(a,p) + dist(p, b) == dist(a,b)*/
         return ap + pb == ab;
@@ -148,8 +165,8 @@ public class Line extends Shape {
     @Override
     public Point getCenterPoint() {
         return new Point(
-                (a.x + b.x) / 2,
-                (a.y + b.y) / 2);
+                (startPoint.x + endPoint.x) / 2,
+                (startPoint.y + endPoint.y) / 2);
     }
 
     @Override

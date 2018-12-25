@@ -299,4 +299,88 @@ public class RectangleTest {
         Assert.assertTrue(rect2.isEdgeIntersection(rect1));
     }
 
+    /**
+     * Line intersect the left side of rectangle
+     */
+    @Test
+    public void testLineIntersectionLeftSide() throws OperationNotSupportedException {
+        Rectangle rect = new Rectangle(3, 2, 6, 4);
+
+        /* horizontal line (m=0) */
+        Line line1 = new Line(new Point(2, 3), new Point(4, 3));
+
+        /*  right-inclined Line (m >1) */
+        Line line2 = new Line(new Point(2, 2), new Point(4, 3));
+
+        /* left-inclined Line (m <1) */
+        Line line3 = new Line(new Point(4, 3), new Point(2, 5));
+
+
+        Assert.assertTrue(rect.isIntersected(line1));
+        Assert.assertTrue(rect.isIntersected(line2));
+        Assert.assertTrue(rect.isIntersected(line3));
+    }
+
+    /**
+     * Line intersect the right side of rectangle
+     */
+    @Test
+    public void testLineIntersectionRightSide() throws OperationNotSupportedException {
+        Rectangle rect = new Rectangle(3, 2, 6, 4);
+
+        /* horizontal line (m=0) */
+        Line line1 = new Line(new Point(7, 3), new Point(4, 3));
+        /*  right-inclined Line (m >1) */
+        Line line2 = new Line(new Point(4, 3), new Point(7, 4));
+        /* left-inclined Line (m <1) */
+        Line line3 = new Line(new Point(7, 1), new Point(3, 3));
+
+        Assert.assertTrue(rect.isIntersected(line1));
+        Assert.assertTrue(rect.isIntersected(line2));
+        Assert.assertTrue(rect.isIntersected(line3));
+    }
+
+    /**
+     * Line intersect the upper side of rectangle
+     */
+    @Test
+    public void testLineIntersectionUpperSide() throws OperationNotSupportedException {
+        Rectangle rect = new Rectangle(3, 2, 6, 4);
+
+        /* vertical line (m not defined) */
+        Line line1 = new Line(new Point(4, 3), new Point(4, 5));
+
+        /*  right-inclined Line (m >1) */
+        Line line2 = new Line(new Point(4, 3), new Point(5, 6));
+
+        /* left-inclined Line (m <1) */
+        Line line3 = new Line(new Point(5, 3), new Point(4, 6));
+
+        Assert.assertTrue(rect.isIntersected(line1));
+        Assert.assertTrue(rect.isIntersected(line2));
+        Assert.assertTrue(rect.isIntersected(line3));
+    }
+
+
+    /**
+     * Line intersect the bottom side of rectangle
+     */
+    @Test
+    public void testLineIntersectionBottomSide() throws OperationNotSupportedException {
+        Rectangle rect = new Rectangle(3, 2, 6, 4);
+
+        /* vertical line (m not defined) */
+        Line line1 = new Line(new Point(4, 1), new Point(4, 3));
+
+        /*  right-inclined Line (m >1) */
+        Line line2 = new Line(new Point(2, 2), new Point(4, 3));
+
+        /* left-inclined Line (m <1) */
+        Line line3 = new Line(new Point(5, 1), new Point(4, 3));
+
+        Assert.assertTrue(rect.isIntersected(line1));
+        Assert.assertTrue(rect.isIntersected(line2));
+        Assert.assertTrue(rect.isIntersected(line3));
+    }
+
 }
