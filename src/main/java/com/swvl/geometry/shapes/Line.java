@@ -8,13 +8,13 @@ import java.io.DataOutput;
 import java.io.IOException;
 
 public class Line extends Shape {
-    Point startPoint; // Start point of line segment
-    Point endPoint; // End point of line segment
+    public Point startPoint; // Start point of line segment
+    public Point endPoint; // End point of line segment
 
     /* Line equation params ax + by + c = 0*/
-    double a;
-    double b;
-    double c;
+    public double a;
+    public double b;
+    public double c;
 
     public Line() {
 
@@ -124,6 +124,14 @@ public class Line extends Shape {
         if (s instanceof Point)
             return isPointIntersection((Point) s);
 
+        if (s instanceof Rectangle) {
+            Rectangle rect = (Rectangle) s;
+            return rect.isIntersected(this);
+        }
+
+        if (s instanceof Line)
+            return isLineIntersection((Line) s);
+
         return false;
     }
 
@@ -155,6 +163,29 @@ public class Line extends Shape {
 
         /* point between a and b if dist(a,p) + dist(p, b) == dist(a,b)*/
         return ap + pb == ab;
+    }
+
+    private boolean isLineIntersection(Line line) {
+        /*
+         * Check if two lines are parallel.
+         * Parallel lines have the same a & b coefficients
+         */
+        if (Math.abs(this.a - line.a) < Point.EPS
+                && Math.abs(this.b - line.b) < Point.EPS)
+            return false;
+
+        /* solve simultaneous equation of two 2 line equation with two unknowns (x,y) */
+        Point p = new Point();
+        p.x = (line.b * this.c - this.b * line.c) / (line.a * this.b - this.a * line.b);
+
+        /* check vertical line (b=0) to avoid dividing by zero */
+        if (this.b < Point.EPS && this.b > -Point.EPS)
+            p.y = -(line.a * p.x) - line.c; // invoker is a vertical line so calculate y from line
+        else
+            p.y = -(this.a * p.x) - this.c;
+
+        /* Check that intersection point is on both lines */
+        return this.isPointIntersection(p) && line.isPointIntersection(p);
     }
 
     @Override
