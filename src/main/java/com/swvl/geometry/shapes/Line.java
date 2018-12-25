@@ -100,8 +100,6 @@ public class Line extends Shape {
          */
         double u = apx * ux + apy * uy;
 
-
-        Point c;
         /* use pythagoras to calculate perpendicular distance between ap and ab*/
         if (u < 0.0) // closer to a
             return p.distanceTo(startPoint); // Euclidean distance between p and a
@@ -190,7 +188,8 @@ public class Line extends Shape {
 
     @Override
     public Shape clone() {
-        return null;
+        return new Line(new Point(startPoint.x, startPoint.y),
+                new Point(endPoint.x, endPoint.y));
     }
 
     @Override
@@ -213,32 +212,52 @@ public class Line extends Shape {
                     && this.isPointIntersection(line.endPoint);
         }
 
+        if (shape instanceof Rectangle) {
+            Rectangle rect = (Rectangle) shape;
+            return rect.contains(this);
+        }
+
         throw new OperationNotSupportedException("Contains operation in Line does not support " + shape.getClass());
     }
 
     @Override
     public boolean isEdgeIntersection(Shape shape) throws OperationNotSupportedException {
-        return false;
+        throw new OperationNotSupportedException("isEdgeIntersection is not supported for line");
     }
 
     @Override
     public void write(DataOutput dataOutput) throws IOException {
-
+        startPoint.write(dataOutput);
+        endPoint.write(dataOutput);
     }
 
     @Override
     public void readFields(DataInput dataInput) throws IOException {
+        startPoint = new Point();
+        startPoint.readFields(dataInput);
 
+        endPoint = new Point();
+        endPoint.readFields(dataInput);
+
+        init(startPoint, endPoint);
     }
 
     @Override
     public Text toText(Text text) {
-        return null;
+        startPoint.toText(text);
+        endPoint.toText(text);
+        return text;
     }
 
     @Override
     public void fromText(Text text) {
+        startPoint = new Point();
+        startPoint.fromText(text);
 
+        endPoint = new Point();
+        endPoint.fromText(text);
+
+        init(startPoint, endPoint);
     }
 
     public static void main(String[] args) throws OperationNotSupportedException {
