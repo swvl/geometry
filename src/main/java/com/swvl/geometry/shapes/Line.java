@@ -46,36 +46,7 @@ public class Line extends Shape {
 
     @Override
     public Rectangle getMBR() {
-        /* Calculate vector of line */
-        double dx = Math.abs(endPoint.x - startPoint.x); //delta x
-        double dy = Math.abs(endPoint.y - startPoint.y); //delta y
-
-        /* Calculate the unit vector (dx, dy) pointing in the direction of the line  */
-        double vectorMagnitude = Math.sqrt(dx * dx + dy * dy);
-        dx /= vectorMagnitude;
-        dy /= vectorMagnitude;
-
-        /*
-         * Calculate the perpendicular vector, which is given by (-dy, dx)
-         *
-         * Math#ulp(double)} to compute the smallest non-zero thickness that
-         *
-         * Rotation Matrix r = {{cosθ, -sinθ}, {sinθ, cosθ}}
-         * px = dx*cos(90) - dy*sin(90) = 0 - dy = -dy
-         * py = dx*sin(90) + dy*cos(90) = dx + 0 = dx
-         */
-        double px = -dy;
-        double py = dx;
-
-        /* Scale the perpendicular vector by factor = thickness*/
-        double thickness = Math.ulp(dy);
-        px *= thickness;
-        py *= thickness;
-
-        /* We choose to fix the maxPoint. For fixing minPoint, maxPoint = (b.x + px, b.y = a.y + py) */
-        return new Rectangle(
-                startPoint.x - px, startPoint.y - py, // minPoint (bottom-left) is at the bottom-right of a
-                endPoint.x, endPoint.y); // the maxPoint (top-right) is fixed
+        return new Rectangle(startPoint, endPoint);
     }
 
     @Override
