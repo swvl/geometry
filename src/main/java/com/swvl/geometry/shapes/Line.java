@@ -8,13 +8,16 @@ import java.io.DataOutput;
 import java.io.IOException;
 
 public class Line extends Shape {
-    Point a, b;
+    Point a; // Start point of line segment
+    Point b; // End point of line segment
+    double m; // slope
+    double c; // y-intercept
 
     public Line() {
 
     }
 
-    public Line(Point a, Point b) {
+    private void init(Point a, Point b) {
         if (a.isSTE(b)) {
             this.a = a;
             this.b = b;
@@ -22,6 +25,13 @@ public class Line extends Shape {
             this.a = b;
             this.b = a;
         }
+
+        m = (b.y - a.y) / (b.x - a.x);
+        c = b.y - m * b.x;
+    }
+
+    public Line(Point a, Point b) {
+        init(a, b);
     }
 
     @Override
@@ -101,7 +111,25 @@ public class Line extends Shape {
 
     @Override
     public boolean isIntersected(Shape s) throws OperationNotSupportedException {
+        if (s instanceof Point)
+            return isPointIntersection((Point) s);
+
         return false;
+    }
+
+    private boolean isPointIntersection(Point point) {
+        /* Check that point is on line */
+        double y = m * point.x + c;
+        if (y != point.y) // point is not on the line
+            return false;
+
+        /* Check if point is between a and b */
+        double ab = a.distanceTo(b);
+        double ap = a.distanceTo(point);
+        double pb = point.distanceTo(b);
+
+        /* point between a and b if dist(a,p) + dist(p, b) == dist(a,b)*/
+        return ap + pb == ab;
     }
 
     @Override
