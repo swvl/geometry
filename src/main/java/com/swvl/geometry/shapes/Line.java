@@ -117,6 +117,14 @@ public class Line extends Shape {
         return false;
     }
 
+    /**
+     * Check if a point is on the line segment be checking that:
+     * 1- Point lies on the line (by substituting point.x in line equation)
+     * 2- Point lies between a and b
+     *
+     * @param point point to checked for intersection
+     * @return true if point intersect line segment and false otherwise
+     */
     private boolean isPointIntersection(Point point) {
         /* Check that point is on line */
         double y = m * point.x + c;

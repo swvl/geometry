@@ -178,9 +178,10 @@ public class Rectangle extends Shape implements WritableComparable<Rectangle> {
             Rectangle rect = (Rectangle) shape;
 
             /* part of one rectangle is inside the other one */
-            return
-                    this.maxPoint.x > rect.minPoint.x && this.maxPoint.y > rect.minPoint.y
-                            && this.minPoint.x < rect.maxPoint.x && this.minPoint.y < rect.maxPoint.y;
+            return this.maxPoint.x - rect.minPoint.x > -Point.EPS // this.maxPoint.x > rect.minPoint.x
+                    && this.maxPoint.y - rect.minPoint.y > -Point.EPS // this.maxPoint.y > rect.minPoint.y
+                    && this.minPoint.x - rect.maxPoint.x < Point.EPS // this.minPoint.x < rect.maxPoint.x
+                    && this.minPoint.y - rect.maxPoint.y < Point.EPS; // this.minPoint.y < rect.maxPoint.y
         }
 
         throw new OperationNotSupportedException("Contains operation in Rectangle does not support " + shape.getClass());
@@ -221,11 +222,16 @@ public class Rectangle extends Shape implements WritableComparable<Rectangle> {
 
         if (shape instanceof Rectangle) {
             Rectangle rect = (Rectangle) shape;
+            double maxXDiff = this.maxPoint.x - rect.maxPoint.x;
+            double maxYDiff = this.maxPoint.y - rect.maxPoint.y;
+            double minXDiff = this.minPoint.x - rect.minPoint.x;
+            double minYDiff = this.minPoint.y - rect.minPoint.y;
 
-            return
-                    this.maxPoint.isGTE(rect.maxPoint) && this.minPoint.isSTE(rect.minPoint);
-//                    this.maxPoint.x >= rect.maxPoint.x && this.maxPoint.y >= rect.maxPoint.y
-//                            && this.minPoint.x <= rect.minPoint.x && this.minPoint.y <= rect.minPoint.y;
+            return maxXDiff >= -Point.EPS  // this.maxPoint.x >= rect.maxPoint.x
+                    && maxYDiff >= -Point.EPS // this.maxPoint.y >= rect.maxPoint.y
+                    && minXDiff <= Point.EPS // this.minPoint.x >= rect.minPoint.x
+                    && minYDiff <= Point.EPS; // this.minPoint.y >= rect.minPoint.y
+
         }
 
         throw new OperationNotSupportedException("Contains operation in Rectangle does not support " + shape.getClass());
