@@ -243,6 +243,14 @@ public class Rectangle extends Shape implements WritableComparable<Rectangle> {
 
         }
 
+        /* For a rectangle to contain a line segment,
+         * the two points of line segment should be inside the rectangle
+         */
+        if (shape instanceof Line) {
+            Line line = (Line) shape;
+            return this.isIntersected(line.startPoint) && this.isIntersected(line.endPoint);
+        }
+
         throw new OperationNotSupportedException("Contains operation in Rectangle does not support " + shape.getClass());
     }
 

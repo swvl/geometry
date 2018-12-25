@@ -8,7 +8,7 @@ import javax.naming.OperationNotSupportedException;
 public class RectangleTest {
 
     @Test
-    public void expandTest() throws OperationNotSupportedException {
+    public void testRectangleExpansion() throws OperationNotSupportedException {
         Point point1 = new Point(30.4259967, 30.7862083);
         Point point2 = new Point(32.2359967, 32.5661083);
 
@@ -23,7 +23,7 @@ public class RectangleTest {
     }
 
     @Test
-    public void containsTest() throws OperationNotSupportedException {
+    public void testRectanlgeContiainsPointWithFloatCoordinates() throws OperationNotSupportedException {
         Point point1 = new Point(30.4259967, 30.7862083);
         Point point2 = new Point(32.2359967, 32.5661083);
         Rectangle rectangle = new Rectangle(point1.clone(), point2.clone());
@@ -42,7 +42,7 @@ public class RectangleTest {
     }
 
     @Test
-    public void intersectionTest() throws OperationNotSupportedException {
+    public void testRectanlgeIntersectRectangle() throws OperationNotSupportedException {
         Point point1 = new Point(30.4259967, 30.7862083);
         Point point2 = new Point(32.2359967, 32.5661083);
         Rectangle rectangle = new Rectangle(point1.clone(), point2.clone());
@@ -60,7 +60,7 @@ public class RectangleTest {
     }
 
     @Test
-    public void testContains2() throws OperationNotSupportedException {
+    public void testContainsPoint() throws OperationNotSupportedException {
         Rectangle rect = new Rectangle(2.0, 2.0, 4.0, 4.0);
 
         Assert.assertFalse(rect.contains(new Point(1, 2)));
@@ -116,7 +116,7 @@ public class RectangleTest {
     }
 
     @Test
-    public void testIntersection2() throws OperationNotSupportedException {
+    public void testRectanlgeIntersectionAndContainsPoint() throws OperationNotSupportedException {
         Rectangle rect = new Rectangle(2.0, 2.0, 4.0, 4.0);
 
         Assert.assertFalse(rect.isIntersected(new Point(1, 2)));
@@ -286,6 +286,49 @@ public class RectangleTest {
     }
 
     @Test
+    public void testRectangleFullyContainsRectangle() throws OperationNotSupportedException {
+        Rectangle rect1 = new Rectangle(3, 2, 6, 6);
+        Rectangle rect2 = new Rectangle(4, 3, 5, 5);
+
+        Assert.assertTrue(rect1.contains(rect2));
+        Assert.assertTrue(rect1.isIntersected(rect2));
+    }
+
+
+    @Test
+    public void testRectangleFullyContainsRectangleWithEdgeIntersection() throws OperationNotSupportedException {
+        Rectangle rect1 = new Rectangle(3, 2, 6, 6);
+        Rectangle rect2 = new Rectangle(3, 3, 5, 5);
+
+        Assert.assertTrue(rect1.contains(rect2));
+        Assert.assertTrue(rect1.isIntersected(rect2));
+    }
+
+    @Test
+    public void testRectanglePartialContainsRectangleWithoutEdgeIntersection() throws OperationNotSupportedException {
+        Rectangle rect1 = new Rectangle(3, 2, 6, 6);
+        Rectangle rect2 = new Rectangle(2, 3, 5, 5);
+
+        Assert.assertFalse(rect1.contains(rect2));
+        Assert.assertTrue(rect1.isIntersected(rect2));
+    }
+
+    @Test
+    public void testRectanglePartialContainsRectangleWithEdgeIntersection() throws OperationNotSupportedException {
+        Rectangle rect1 = new Rectangle(3, 2, 6, 6);
+        Rectangle rect2 = new Rectangle(3, 3, 5, 8);
+
+        Assert.assertFalse(rect1.contains(rect2));
+        Assert.assertTrue(rect1.isIntersected(rect2));
+
+        Rectangle rect3 = new Rectangle(2, 2, 6, 6);
+        Assert.assertFalse(rect1.contains(rect3));
+        Assert.assertTrue(rect3.contains(rect1));
+        Assert.assertTrue(rect1.isIntersected(rect3));
+        Assert.assertTrue(rect3.isIntersected(rect1));
+    }
+
+    @Test
     public void testVertixIntersection() throws OperationNotSupportedException {
         Rectangle rect1 = new Rectangle(3, 2, 6, 4);
         Rectangle rect2 = new Rectangle(6, 4, 8, 10);
@@ -319,6 +362,10 @@ public class RectangleTest {
         Assert.assertTrue(rect.isIntersected(line1));
         Assert.assertTrue(rect.isIntersected(line2));
         Assert.assertTrue(rect.isIntersected(line3));
+
+        Assert.assertFalse(rect.contains(line1));
+        Assert.assertFalse(rect.contains(line2));
+        Assert.assertFalse(rect.contains(line3));
     }
 
     /**
@@ -338,6 +385,10 @@ public class RectangleTest {
         Assert.assertTrue(rect.isIntersected(line1));
         Assert.assertTrue(rect.isIntersected(line2));
         Assert.assertTrue(rect.isIntersected(line3));
+
+        Assert.assertFalse(rect.contains(line1));
+        Assert.assertFalse(rect.contains(line2));
+        Assert.assertFalse(rect.contains(line3));
     }
 
     /**
@@ -359,6 +410,10 @@ public class RectangleTest {
         Assert.assertTrue(rect.isIntersected(line1));
         Assert.assertTrue(rect.isIntersected(line2));
         Assert.assertTrue(rect.isIntersected(line3));
+
+        Assert.assertFalse(rect.contains(line1));
+        Assert.assertFalse(rect.contains(line2));
+        Assert.assertFalse(rect.contains(line3));
     }
 
 
@@ -381,6 +436,53 @@ public class RectangleTest {
         Assert.assertTrue(rect.isIntersected(line1));
         Assert.assertTrue(rect.isIntersected(line2));
         Assert.assertTrue(rect.isIntersected(line3));
+
+        Assert.assertFalse(rect.contains(line1));
+        Assert.assertFalse(rect.contains(line2));
+        Assert.assertFalse(rect.contains(line3));
+
+    }
+
+    @Test
+    public void testRectangleContainsLine() throws OperationNotSupportedException {
+        Rectangle rect = new Rectangle(3, 2, 6, 6);
+
+        /* Horizontal Line */
+        Line l1 = new Line(new Point(4, 3), new Point(5, 3));
+        /* Inclined Line */
+        Line l2 = new Line(new Point(3, 2), new Point(4, 3));
+        /* Vertical Line */
+        Line l3 = new Line(new Point(4, 3), new Point(4, 5));
+
+        Assert.assertTrue(rect.contains(l1));
+        Assert.assertTrue(rect.contains(l2));
+        Assert.assertTrue(rect.contains(l3));
+        Assert.assertTrue(rect.isIntersected(l1));
+        Assert.assertTrue(rect.isIntersected(l2));
+        Assert.assertTrue(rect.isIntersected(l3));
+
+
+        /* Edge intersection lines */
+
+        /* Horizontal Line */
+        Line l4 = new Line(new Point(3, 3), new Point(6, 3));
+        /* Inclined Line (m > 0)*/
+        Line l5 = new Line(new Point(3, 2), new Point(6, 6));
+        /* Inclined Line (m < 0)*/
+        Line l6 = new Line(new Point(6, 2), new Point(3, 6));
+        /* Vertical Line */
+        Line l7 = new Line(new Point(4, 3), new Point(4, 6));
+
+        Assert.assertTrue(rect.contains(l4));
+        Assert.assertTrue(rect.contains(l5));
+        Assert.assertTrue(rect.contains(l6));
+        Assert.assertTrue(rect.contains(l7));
+
+        Assert.assertTrue(rect.isIntersected(l4));
+        Assert.assertTrue(rect.isIntersected(l5));
+        Assert.assertTrue(rect.isIntersected(l6));
+        Assert.assertTrue(rect.isIntersected(l7));
+
     }
 
 }

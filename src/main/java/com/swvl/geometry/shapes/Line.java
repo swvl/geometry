@@ -120,19 +120,19 @@ public class Line extends Shape {
     }
 
     @Override
-    public boolean isIntersected(Shape s) throws OperationNotSupportedException {
-        if (s instanceof Point)
-            return isPointIntersection((Point) s);
+    public boolean isIntersected(Shape shape) throws OperationNotSupportedException {
+        if (shape instanceof Point)
+            return isPointIntersection((Point) shape);
 
-        if (s instanceof Rectangle) {
-            Rectangle rect = (Rectangle) s;
+        if (shape instanceof Rectangle) {
+            Rectangle rect = (Rectangle) shape;
             return rect.isIntersected(this);
         }
 
-        if (s instanceof Line)
-            return isLineIntersection((Line) s);
+        if (shape instanceof Line)
+            return isLineIntersection((Line) shape);
 
-        return false;
+        throw new OperationNotSupportedException("isIntersected operation in Line does not support " + shape.getClass());
     }
 
     /**
@@ -202,7 +202,18 @@ public class Line extends Shape {
 
     @Override
     public boolean contains(Shape shape) throws OperationNotSupportedException {
-        return false;
+        if (shape instanceof Point)
+            return isPointIntersection((Point) shape);
+
+
+        if (shape instanceof Line) {
+            /* Check that both points of line exist on invoker line */
+            Line line = (Line) shape;
+            return this.isPointIntersection(line.startPoint)
+                    && this.isPointIntersection(line.endPoint);
+        }
+
+        throw new OperationNotSupportedException("Contains operation in Line does not support " + shape.getClass());
     }
 
     @Override
@@ -289,5 +300,10 @@ public class Line extends Shape {
         Point b4 = new Point(4, 1);
         Line l4 = new Line(a4, b4);
         System.out.println(l4.distanceTo(p4));
+        System.out.println();
+
+        Line l5 = new Line(new Point(2, 3), new Point(2, 6));
+        Line l6 = new Line(new Point(2, 4), new Point(5, 4));
+
     }
 }
