@@ -34,6 +34,10 @@ public class Polygon extends Shape {
             throw new IllegalArgumentException("Number of points must be equal length of " +
                     "Array(Point) after removing last vertex (duplicate of first vertex)");
 
+        if (numPoints < 3)
+            throw new IllegalArgumentException("Number of point for polygon must " +
+                    "by greater than or equal 3");
+
         this.points = points;
         this.numPoints = numPoints;
     }
@@ -63,15 +67,75 @@ public class Polygon extends Shape {
     }
 
     @Override
-    public boolean isIntersected(Shape s) throws OperationNotSupportedException {
+    public boolean isIntersected(Shape shape) throws OperationNotSupportedException {
+        if (shape instanceof Point)
+            return isPointIntersection((Point) shape);
 
         return false;
     }
 
-    private boolean isPointIntersection(Point point){
+    /**
+     * Returns true if the point p lies inside the polygon
+     * <p>
+     * A point is inside the polygon if either count of intersections is odd or
+     * point lies on an edge of polygon.  If none of the conditions is true, then
+     * point lies outside.
+     */
+    private boolean isPointIntersection(Point point) throws OperationNotSupportedException {
+        /* Create a point for line segment from p to infinite */
+        Point infinityLine = new Point(Double.MAX_VALUE, point.y);
+
+        /* Pointer to current edge in polygon */
+        Line edge = new Line();
+
+        /* Count intersections of the above line with sides of polygon */
+        int count = 0;
 
 
-        return false;
+        for (int i = 0; i < points.length - 1; ++i) {
+            edge.startPoint = points[i];
+            edge.endPoint = points[i + 1];
+
+            /*
+             * Check if the infinityLine line segment intersects
+             * with the edge line segment
+             */
+            if (edge.isIntersected(infinityLine)) {
+                /*
+                 * If the point 'p' is colinear with edge line segment,
+                 * then check if it lies on segment. If it lies, return true,
+                 */
+                if (areCollinear(points[i], point, points[i + 1]))
+                    return edge.contains(point);
+
+                count++;
+            }
+        }
+
+        return count % 2 == 1;
+    }
+
+    /**
+     * @param p 1st point
+     * @param q 2nd point
+     * @param r 3rd point
+     * @return true if the 3 points lies on the line
+     */
+    private boolean areCollinear(Point p, Point q, Point r) {
+        /* Calculate vector pq^ */
+        double pqx = q.x - p.y;
+        double pqy = q.y - p.y;
+
+        /* Calculate vector qr^ */
+        double qrx = r.x - q.x;
+        double qry = r.y - q.y;
+
+        /* Cross product between pq^ and qr^ */
+        double val = pqx * qry - pqy * qrx;
+
+        /* if val = 0 then points are collinear */
+        return val < Point.EPS && val > -Point.EPS;
+
     }
 
     @Override

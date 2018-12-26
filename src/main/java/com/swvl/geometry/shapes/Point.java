@@ -21,7 +21,7 @@ public class Point extends Shape implements WritableComparable<Point> {
     public double y;
 
     public Point() {
-        this(-1, -1);
+        this(Double.MIN_VALUE, Double.MIN_VALUE);
     }
 
     public Point(double x, double y) {
