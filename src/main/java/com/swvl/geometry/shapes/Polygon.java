@@ -2,6 +2,7 @@ package com.swvl.geometry.shapes;
 
 import com.swvl.geometry.io.TextSerializerHelper;
 import org.apache.hadoop.io.Text;
+import org.omg.PortableServer.POA;
 
 import javax.naming.OperationNotSupportedException;
 import java.io.DataInput;
@@ -135,12 +136,10 @@ public class Polygon extends Shape {
              * with the edge line segment
              */
             if (edge.isIntersected(infinityLine)) {
-                /*
-                 * If the point 'p' is colinear with edge line segment,
-                 * then check if it lies on segment. If it lies, return true,
-                 */
-                if (areCollinear(points[i], point, points[i + 1]))
-                    return edge.contains(point);
+
+                /* check if it lies on segment. If it lies, return true */
+                if (edge.contains(point))
+                    return true;
 
                 count++;
             }
@@ -368,45 +367,5 @@ public class Polygon extends Shape {
                 return false;
 
         return true;
-    }
-
-    public static void main(String[] args) throws OperationNotSupportedException {
-        Polygon polygon = new Polygon();
-        polygon.points = new Point[]{
-                new Point(0, 0),
-                new Point(0, 10),
-                new Point(5, 15),
-                new Point(10, 10),
-                new Point(10, 0),
-                new Point(0, 0)
-        };
-
-        Point p1 = new Point(20, 20);
-        System.out.println(polygon.isIntersected(p1));
-
-        Point p2 = new Point(5, 5);
-        System.out.println(polygon.isIntersected(p2));
-
-        Point p3 = new Point(5, 15);
-        System.out.println(polygon.isIntersected(p3));
-
-        Point p4 = new Point(10, 5);
-        System.out.println(polygon.isIntersected(p4));
-
-        Point p5 = new Point(4, 15);
-        System.out.println(polygon.isIntersected(p5));
-
-        Point p6 = new Point(-1, 6);
-        System.out.println(polygon.isIntersected(p6));
-
-        Point p7 = new Point(0, 0);
-        System.out.println(polygon.isIntersected(p7));
-
-        Point p8 = new Point(0, 10);
-        System.out.println(polygon.isIntersected(p8));
-
-        Point p9 = new Point(11, 10);
-        System.out.println(polygon.isIntersected(p9));
-
     }
 }
