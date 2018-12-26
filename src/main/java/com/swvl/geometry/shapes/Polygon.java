@@ -72,7 +72,16 @@ public class Polygon extends Shape {
 
     @Override
     public double distanceTo(Point p) {
-        return 0;
+        /* Pointer to current edge in polygon */
+        Line edge = new Line();
+        double minDistance = Double.MAX_VALUE;
+
+        for (int i = 0; i < points.length - 1; ++i) {
+            edge.init(points[i], points[i + 1]);
+            minDistance = Math.min(minDistance, edge.distanceTo(p));
+        }
+
+        return minDistance;
     }
 
     @Override
@@ -92,7 +101,7 @@ public class Polygon extends Shape {
         if (shape instanceof Line)
             return isLineIntersected((Line) shape);
 
-        return false;
+        throw new OperationNotSupportedException("isIntersected operation in Polygon does not support " + shape.getClass());
     }
 
     /**
@@ -224,8 +233,12 @@ public class Polygon extends Shape {
     }
 
     @Override
-    public Shape clone() {
-        return null;
+    public Polygon clone() {
+        Point[] clonedPoints = new Point[points.length];
+        for (int i = 0; i < points.length - 1; ++i)
+            clonedPoints[i] = points[i].clone();
+
+        return new Polygon(clonedPoints);
     }
 
     /**
@@ -245,12 +258,65 @@ public class Polygon extends Shape {
 
     @Override
     public boolean contains(Shape shape) throws OperationNotSupportedException {
-        return false;
+        if (!isInitialized)
+            init(points);
+
+        if (shape instanceof Point)
+            return isPointIntersection((Point) shape);
+
+        if (shape instanceof Line) {
+            Line line = (Line) shape;
+            return isPointIntersection(line.getStartPoint())
+                    && isPointIntersection(line.getEndPoint());
+        }
+
+        if (shape instanceof Rectangle)
+            return containsRectangle((Rectangle) shape);
+
+        if (shape instanceof Polygon)
+            return containsPolygon((Polygon) shape);
+
+        throw new OperationNotSupportedException("contains operation in Polygon does not support " + shape.getClass());
+
+    }
+
+    private boolean containsRectangle(Rectangle rect) throws OperationNotSupportedException {
+        Point p1 = new Point(rect.maxPoint.x, rect.minPoint.y); // bottom-right point
+        Point p2 = new Point(rect.minPoint.x, rect.maxPoint.y); // upper-left point
+
+        /* Edges of a rectangle */
+        Point[] rectPoints = new Point[]{
+                rect.minPoint,
+                p1,
+                rect.maxPoint,
+                p2
+        };
+
+        boolean isContained = true;
+
+        /*
+         * Iterate over rectangle points and check if that all points are
+         * inside the polygon
+         */
+        for (Point rectPoint : rectPoints)
+            isContained &= this.isPointIntersection(rectPoint);
+
+        return isContained;
+    }
+
+    private boolean containsPolygon(Polygon polygon) throws OperationNotSupportedException {
+        boolean isContained = true;
+
+        /* Iterate over polygon's points and check if any point is inside the invoker polygon*/
+        for (int i = 0; i < polygon.points.length - 1; ++i)
+            isContained &= this.isPointIntersection(polygon.points[i]);
+
+        return isContained;
     }
 
     @Override
     public boolean isEdgeIntersection(Shape shape) throws OperationNotSupportedException {
-        return false;
+        throw new OperationNotSupportedException("isEdgeIntersection is not supported for Polygon");
     }
 
     @Override
