@@ -64,6 +64,13 @@ public class Polygon extends Shape {
 
     @Override
     public boolean isIntersected(Shape s) throws OperationNotSupportedException {
+
+        return false;
+    }
+
+    private boolean isPointIntersection(Point point){
+
+
         return false;
     }
 

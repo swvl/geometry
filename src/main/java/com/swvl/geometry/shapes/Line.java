@@ -117,10 +117,10 @@ public class Line extends Shape {
         if (b != 0) {
             double y = -(a * point.x) - c;
 
-            if (y != point.y) // point is not on the line
+            if (Math.abs(y - point.y) > Point.EPS) // point is not on the line
                 return false;
         } else {
-            if (point.x != -c) // vertical line and x != -c
+            if (Math.abs(point.x - (-c)) > Point.EPS) // vertical line and x != -c
                 return false;
         }
 
@@ -131,17 +131,17 @@ public class Line extends Shape {
         double pb = point.distanceTo(endPoint);
 
         /* point between a and b if dist(a,p) + dist(p, b) == dist(a,b)*/
-        return ap + pb == ab;
+        return Math.abs(ab - (ap + pb)) < Point.EPS;
     }
 
     private boolean isLineIntersection(Line line) {
-        /*
-         * Check if two lines are parallel.
-         * Parallel lines have the same a & b coefficients
-         */
-        if (Math.abs(this.a - line.a) < Point.EPS
-                && Math.abs(this.b - line.b) < Point.EPS)
-            return false;
+
+        /* Check for general case that line segments intersect at boundaries*/
+        if (this.startPoint.equals(line.startPoint)
+                || this.startPoint.equals(line.endPoint)
+                || this.endPoint.equals(line.startPoint)
+                || this.endPoint.equals(line.endPoint))
+            return true;
 
         /* solve simultaneous equation of two 2 line equation with two unknowns (x,y) */
         Point p = new Point();
