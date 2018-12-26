@@ -172,4 +172,15 @@ public class PolygonTest {
         Assert.assertTrue(poly2.isIntersected(l12));
         Assert.assertTrue(poly2.contains(l12));
     }
+
+
+    @Test
+    public void testRectangleIntersectionAndContains() {
+
+    }
+
+    @Test
+    public void testPolygonIntersectionAndContains() {
+
+    }
 }
