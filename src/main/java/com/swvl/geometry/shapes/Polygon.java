@@ -22,6 +22,9 @@ public class Polygon extends Shape {
     /* Number of points */
     int numPoints;
 
+    /* Maximum x-coordinate */
+    double maxX = Double.MIN_VALUE;
+
     public Polygon() {
     }
 
@@ -82,8 +85,12 @@ public class Polygon extends Shape {
      * point lies outside.
      */
     private boolean isPointIntersection(Point point) throws OperationNotSupportedException {
+        if (maxX == Double.MIN_VALUE)
+            for (int i = 0; i < points.length - 1; ++i)
+                maxX = Math.max(maxX, points[i].x);
+
         /* Create a point for line segment from p to infinite */
-        Point infinityLine = new Point(Double.MAX_VALUE, point.y);
+        Line infinityLine = new Line(point, new Point(maxX + 1e3, point.y));
 
         /* Pointer to current edge in polygon */
         Line edge = new Line();
@@ -93,8 +100,7 @@ public class Polygon extends Shape {
 
 
         for (int i = 0; i < points.length - 1; ++i) {
-            edge.startPoint = points[i];
-            edge.endPoint = points[i + 1];
+            edge.init(points[i], points[i + 1]);
 
             /*
              * Check if the infinityLine line segment intersects
@@ -188,7 +194,43 @@ public class Polygon extends Shape {
     }
 
 
-//    private int distanceToLine(Point pt, Point a, Point b){
-//
-//    }
+    public static void main(String[] args) throws OperationNotSupportedException {
+        Polygon polygon = new Polygon();
+        polygon.points = new Point[]{
+                new Point(0, 0),
+                new Point(0, 10),
+                new Point(5, 15),
+                new Point(10, 10),
+                new Point(10, 0),
+                new Point(0, 0)
+        };
+
+        Point p1 = new Point(20, 20);
+        System.out.println(polygon.isIntersected(p1));
+
+        Point p2 = new Point(5, 5);
+        System.out.println(polygon.isIntersected(p2));
+
+        Point p3 = new Point(5, 15);
+        System.out.println(polygon.isIntersected(p3));
+
+        Point p4 = new Point(10, 5);
+        System.out.println(polygon.isIntersected(p4));
+
+        Point p5 = new Point(4, 15);
+        System.out.println(polygon.isIntersected(p5));
+
+        Point p6 = new Point(-1, 6);
+        System.out.println(polygon.isIntersected(p6));
+
+        Point p7 = new Point(0, 0);
+        System.out.println(polygon.isIntersected(p7));
+
+        Point p8 = new Point(0, 10);
+        System.out.println(polygon.isIntersected(p8));
+
+        Point p9 = new Point(11, 10);
+        System.out.println(polygon.isIntersected(p9));
+
+    }
 }

@@ -189,7 +189,7 @@ public class Rectangle extends Shape implements WritableComparable<Rectangle> {
          */
         if (shape instanceof Line) {
             Line line = (Line) shape;
-            return this.isIntersected(line.startPoint) || this.isIntersected(line.endPoint);
+            return this.isIntersected(line.getStartPoint()) || this.isIntersected(line.getEndPoint());
         }
 
         throw new OperationNotSupportedException("Contains operation in Rectangle does not support " + shape.getClass());
@@ -248,7 +248,7 @@ public class Rectangle extends Shape implements WritableComparable<Rectangle> {
          */
         if (shape instanceof Line) {
             Line line = (Line) shape;
-            return this.isIntersected(line.startPoint) && this.isIntersected(line.endPoint);
+            return this.isIntersected(line.getStartPoint()) && this.isIntersected(line.getEndPoint());
         }
 
         throw new OperationNotSupportedException("Contains operation in Rectangle does not support " + shape.getClass());

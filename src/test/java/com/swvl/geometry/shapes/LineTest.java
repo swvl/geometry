@@ -66,8 +66,8 @@ public class LineTest {
      */
     private boolean checkAccuracyOfPointDistanceUsingTrigonometry(Line line, Point p) {
         /* Calculate vector ep */
-        double epx = p.x - line.endPoint.x;
-        double epy = p.y - line.endPoint.y;
+        double epx = p.x - line.getEndPoint().x;
+        double epy = p.y - line.getEndPoint().y;
 
         /* Magnitude of ep vector */
         double hypotenuse = Math.sqrt(epx * epx + epy * epy);
