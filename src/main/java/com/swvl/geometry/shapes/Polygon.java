@@ -206,7 +206,8 @@ public class Polygon extends Shape {
             if (line.isIntersected(points[i]))
                 return true;
 
-        return false;
+        /* Check if Line is inside the polygon */
+        return this.contains(line);
     }
 
     /**
