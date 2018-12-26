@@ -233,4 +233,15 @@ public class Line extends Shape {
     public Point getEndPoint() {
         return endPoint;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof Line))
+            return false;
+
+        Line line = (Line) obj;
+
+        return this.startPoint.equals(line.startPoint)
+                && this.endPoint.equals(line.endPoint);
+    }
 }

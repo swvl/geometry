@@ -354,6 +354,22 @@ public class Polygon extends Shape {
     }
 
 
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof Polygon))
+            return false;
+
+        Polygon polygon = (Polygon) obj;
+        if (this.points.length != polygon.points.length)
+            return false;
+
+        for (int i = 0; i < points.length; ++i)
+            if (!this.points[i].equals(polygon.points[i]))
+                return false;
+
+        return true;
+    }
+
     public static void main(String[] args) throws OperationNotSupportedException {
         Polygon polygon = new Polygon();
         polygon.points = new Point[]{
