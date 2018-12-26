@@ -1,5 +1,6 @@
 package com.swvl.geometry.shapes;
 
+import com.swvl.geometry.io.TextSerializerHelper;
 import org.apache.hadoop.io.Text;
 
 import javax.naming.OperationNotSupportedException;
@@ -321,22 +322,35 @@ public class Polygon extends Shape {
 
     @Override
     public void write(DataOutput dataOutput) throws IOException {
-
+        dataOutput.writeInt(points.length);
+        for (Point point : points) point.write(dataOutput);
     }
 
     @Override
     public void readFields(DataInput dataInput) throws IOException {
-
+        int size = dataInput.readInt();
+        points = new Point[size];
+        for (int i = 0; i < points.length; ++i) {
+            points[i] = new Point();
+            points[i].readFields(dataInput);
+        }
     }
 
     @Override
     public Text toText(Text text) {
-        return null;
+        TextSerializerHelper.serializeInt(points.length, text, ',');
+        for (Point point : points) point.toText(text);
+        return text;
     }
 
     @Override
     public void fromText(Text text) {
-
+        int size = TextSerializerHelper.consumeInt(text, ',');
+        points = new Point[size];
+        for (int i = 0; i < points.length; ++i) {
+            points[i] = new Point();
+            points[i].fromText(text);
+        }
     }
 
 
