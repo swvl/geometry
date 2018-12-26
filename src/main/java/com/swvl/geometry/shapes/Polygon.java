@@ -14,54 +14,60 @@ import java.io.IOException;
  */
 public class Polygon extends Shape {
     /*
-     * points, entered in counter clockwise order, 0-based indexing with the first vertex being equal
-     * to the last vertex
+     * points, entered in counter clockwise order, 0-based indexing with the first vertex
+     * being equal to the last vertex
      */
-    Point[] points;
-
-    /* Number of points */
-    int numPoints;
-
+    private Point[] points = new Point[]{};
     /* Maximum x-coordinate */
-    double maxX = Double.MIN_VALUE;
+    private double maxX = Double.MIN_VALUE;
+    /* Maximum y-coordinate */
+    private double maxY = Double.MIN_VALUE;
+    /* Minimum x-coordinate */
+    private double minX = Double.MAX_VALUE;
+    /* Maximum Y-coordinate */
+    private double minY = Double.MAX_VALUE;
+    /* flag indicates that init method is called */
+    private boolean isInitialized = false;
 
     public Polygon() {
     }
 
-    public Polygon(Point[] points, int numPoints) {
-        /*
-         * check that number of points equal length of points after removing
-         * last vertex (duplicate of first vertex)
-         */
-        if (points.length - 1 != numPoints)
-            throw new IllegalArgumentException("Number of points must be equal length of " +
-                    "Array(Point) after removing last vertex (duplicate of first vertex)");
+    public Polygon(Point[] points) {
+        init(points);
+    }
 
-        if (numPoints < 3)
+    public void init(Point[] points) {
+
+        if (points.length < 3)
             throw new IllegalArgumentException("Number of point for polygon must " +
                     "by greater than or equal 3");
 
+        /* Check that the first vertex and last vertex are the same */
+        if (!points[points.length - 1].equals(points[0]))
+            throw new IllegalArgumentException("First vertex and last vertex must be same");
+
+
         this.points = points;
-        this.numPoints = numPoints;
+
+
+        for (Point point : points) {
+            double x = point.x;
+            minX = Math.min(minX, x);
+            maxX = Math.max(maxX, x);
+            double y = point.y;
+            minY = Math.min(minY, y);
+            maxY = Math.max(maxY, y);
+        }
+
+        isInitialized = true;
     }
 
     @Override
     public Rectangle getMBR() {
-        double boundsMinX = Integer.MAX_VALUE;
-        double boundsMinY = Integer.MAX_VALUE;
-        double boundsMaxX = Integer.MIN_VALUE;
-        double boundsMaxY = Integer.MIN_VALUE;
+        if (!isInitialized)
+            init(points);
 
-        for (Point point : points) {
-            double x = point.x;
-            boundsMinX = Math.min(boundsMinX, x);
-            boundsMaxX = Math.max(boundsMaxX, x);
-            double y = point.y;
-            boundsMinY = Math.min(boundsMinY, y);
-            boundsMaxY = Math.max(boundsMaxY, y);
-        }
-
-        return new Rectangle(boundsMinX, boundsMinY, boundsMaxX, boundsMaxY);
+        return new Rectangle(minX, minY, maxX, maxY);
     }
 
     @Override
@@ -71,8 +77,20 @@ public class Polygon extends Shape {
 
     @Override
     public boolean isIntersected(Shape shape) throws OperationNotSupportedException {
+        if (!isInitialized)
+            init(points);
+
         if (shape instanceof Point)
             return isPointIntersection((Point) shape);
+
+        if (shape instanceof Rectangle)
+            return isRectangleIntersection((Rectangle) shape);
+
+        if (shape instanceof Polygon)
+            return isPolygonIntersection((Polygon) shape);
+
+        if (shape instanceof Line)
+            return isLineIntersected((Line) shape);
 
         return false;
     }
@@ -121,6 +139,67 @@ public class Polygon extends Shape {
         return count % 2 == 1;
     }
 
+
+    private boolean isRectangleIntersection(Rectangle rect) throws OperationNotSupportedException {
+        Point p1 = new Point(rect.maxPoint.x, rect.minPoint.y); // bottom-right point
+        Point p2 = new Point(rect.minPoint.x, rect.maxPoint.y); // upper-left point
+
+        /* Edges of a rectangle */
+        Point[] rectPoints = new Point[]{
+                rect.minPoint,
+                p1,
+                rect.maxPoint,
+                p2
+        };
+
+        /* Iterate over rectangle points and check if any point is inside the polygon*/
+        for (Point rectPoint : rectPoints)
+            if (this.isPointIntersection(rectPoint))
+                return true;
+
+        /* Iterate over polygon points and check if any point is inside the rectangle*/
+        for (int i = 0; i < points.length - 1; ++i)
+            if (rect.isIntersected(points[i]))
+                return true;
+
+        return false;
+    }
+
+    private boolean isPolygonIntersection(Polygon polygon) throws OperationNotSupportedException {
+
+        /* Iterate over polygon's points and check if any point is inside the invoker polygon*/
+        for (int i = 0; i < polygon.points.length - 1; ++i)
+            if (this.isPointIntersection(polygon.points[i]))
+                return true;
+
+        /* Iterate over invoker polygon points and check if any point is inside polygon*/
+        for (int i = 0; i < points.length - 1; ++i)
+            if (polygon.isIntersected(points[i]))
+                return true;
+
+        return false;
+    }
+
+    private boolean isLineIntersected(Line line) throws OperationNotSupportedException {
+        /* Pointer to current edge in polygon */
+        Line edge = new Line();
+
+        /* Iterate over edges of all polygons and check for intersection with line */
+        for (int i = 0; i < points.length - 1; ++i) {
+            edge.init(points[i], points[i + 1]);
+
+            if (line.isIntersected(edge))
+                return true;
+        }
+
+        /* Check for vertex intersection */
+        for (int i = 0; i < points.length - 1; ++i)
+            if (line.isIntersected(points[i]))
+                return true;
+
+        return false;
+    }
+
     /**
      * @param p 1st point
      * @param q 2nd point
@@ -160,7 +239,8 @@ public class Polygon extends Shape {
             ySum += point.y;
         }
 
-        return new Point(xSum / numPoints, ySum / numPoints);
+        return new Point(xSum / (points.length - 1),
+                ySum / (points.length - 1));
     }
 
     @Override
