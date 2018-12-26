@@ -187,8 +187,8 @@ public class Rectangle extends Shape implements WritableComparable<Rectangle> {
         /* For a line segment to intersect a rectangle,
          * at least one of its end points should be inside the rectangle
          */
-        if (shape instanceof Line) {
-            Line line = (Line) shape;
+        if (shape instanceof LineSegment) {
+            LineSegment line = (LineSegment) shape;
             return this.isIntersected(line.getStartPoint()) || this.isIntersected(line.getEndPoint());
         }
 
@@ -246,8 +246,8 @@ public class Rectangle extends Shape implements WritableComparable<Rectangle> {
         /* For a rectangle to contain a line segment,
          * the two points of line segment should be inside the rectangle
          */
-        if (shape instanceof Line) {
-            Line line = (Line) shape;
+        if (shape instanceof LineSegment) {
+            LineSegment line = (LineSegment) shape;
             return this.isIntersected(line.getStartPoint()) && this.isIntersected(line.getEndPoint());
         }
 

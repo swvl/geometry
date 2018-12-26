@@ -343,20 +343,20 @@ public class RectangleTest {
     }
 
     /**
-     * Line intersect the left side of rectangle
+     * LineSegment intersect the left side of rectangle
      */
     @Test
     public void testLineIntersectionLeftSide() throws OperationNotSupportedException {
         Rectangle rect = new Rectangle(3, 2, 6, 4);
 
         /* horizontal line (m=0) */
-        Line line1 = new Line(new Point(2, 3), new Point(4, 3));
+        LineSegment line1 = new LineSegment(new Point(2, 3), new Point(4, 3));
 
-        /*  right-inclined Line (m >1) */
-        Line line2 = new Line(new Point(2, 2), new Point(4, 3));
+        /*  right-inclined LineSegment (m >1) */
+        LineSegment line2 = new LineSegment(new Point(2, 2), new Point(4, 3));
 
-        /* left-inclined Line (m <1) */
-        Line line3 = new Line(new Point(4, 3), new Point(2, 5));
+        /* left-inclined LineSegment (m <1) */
+        LineSegment line3 = new LineSegment(new Point(4, 3), new Point(2, 5));
 
 
         Assert.assertTrue(rect.isIntersected(line1));
@@ -369,18 +369,18 @@ public class RectangleTest {
     }
 
     /**
-     * Line intersect the right side of rectangle
+     * LineSegment intersect the right side of rectangle
      */
     @Test
     public void testLineIntersectionRightSide() throws OperationNotSupportedException {
         Rectangle rect = new Rectangle(3, 2, 6, 4);
 
         /* horizontal line (m=0) */
-        Line line1 = new Line(new Point(7, 3), new Point(4, 3));
-        /*  right-inclined Line (m >1) */
-        Line line2 = new Line(new Point(4, 3), new Point(7, 4));
-        /* left-inclined Line (m <1) */
-        Line line3 = new Line(new Point(7, 1), new Point(3, 3));
+        LineSegment line1 = new LineSegment(new Point(7, 3), new Point(4, 3));
+        /*  right-inclined LineSegment (m >1) */
+        LineSegment line2 = new LineSegment(new Point(4, 3), new Point(7, 4));
+        /* left-inclined LineSegment (m <1) */
+        LineSegment line3 = new LineSegment(new Point(7, 1), new Point(3, 3));
 
         Assert.assertTrue(rect.isIntersected(line1));
         Assert.assertTrue(rect.isIntersected(line2));
@@ -392,20 +392,20 @@ public class RectangleTest {
     }
 
     /**
-     * Line intersect the upper side of rectangle
+     * LineSegment intersect the upper side of rectangle
      */
     @Test
     public void testLineIntersectionUpperSide() throws OperationNotSupportedException {
         Rectangle rect = new Rectangle(3, 2, 6, 4);
 
         /* vertical line (m not defined) */
-        Line line1 = new Line(new Point(4, 3), new Point(4, 5));
+        LineSegment line1 = new LineSegment(new Point(4, 3), new Point(4, 5));
 
-        /*  right-inclined Line (m >1) */
-        Line line2 = new Line(new Point(4, 3), new Point(5, 6));
+        /*  right-inclined LineSegment (m >1) */
+        LineSegment line2 = new LineSegment(new Point(4, 3), new Point(5, 6));
 
-        /* left-inclined Line (m <1) */
-        Line line3 = new Line(new Point(5, 3), new Point(4, 6));
+        /* left-inclined LineSegment (m <1) */
+        LineSegment line3 = new LineSegment(new Point(5, 3), new Point(4, 6));
 
         Assert.assertTrue(rect.isIntersected(line1));
         Assert.assertTrue(rect.isIntersected(line2));
@@ -418,20 +418,20 @@ public class RectangleTest {
 
 
     /**
-     * Line intersect the bottom side of rectangle
+     * LineSegment intersect the bottom side of rectangle
      */
     @Test
     public void testLineIntersectionBottomSide() throws OperationNotSupportedException {
         Rectangle rect = new Rectangle(3, 2, 6, 4);
 
         /* vertical line (m not defined) */
-        Line line1 = new Line(new Point(4, 1), new Point(4, 3));
+        LineSegment line1 = new LineSegment(new Point(4, 1), new Point(4, 3));
 
-        /*  right-inclined Line (m >1) */
-        Line line2 = new Line(new Point(2, 2), new Point(4, 3));
+        /*  right-inclined LineSegment (m >1) */
+        LineSegment line2 = new LineSegment(new Point(2, 2), new Point(4, 3));
 
-        /* left-inclined Line (m <1) */
-        Line line3 = new Line(new Point(5, 1), new Point(4, 3));
+        /* left-inclined LineSegment (m <1) */
+        LineSegment line3 = new LineSegment(new Point(5, 1), new Point(4, 3));
 
         Assert.assertTrue(rect.isIntersected(line1));
         Assert.assertTrue(rect.isIntersected(line2));
@@ -447,12 +447,12 @@ public class RectangleTest {
     public void testRectangleContainsLine() throws OperationNotSupportedException {
         Rectangle rect = new Rectangle(3, 2, 6, 6);
 
-        /* Horizontal Line */
-        Line l1 = new Line(new Point(4, 3), new Point(5, 3));
-        /* Inclined Line */
-        Line l2 = new Line(new Point(3, 2), new Point(4, 3));
-        /* Vertical Line */
-        Line l3 = new Line(new Point(4, 3), new Point(4, 5));
+        /* Horizontal LineSegment */
+        LineSegment l1 = new LineSegment(new Point(4, 3), new Point(5, 3));
+        /* Inclined LineSegment */
+        LineSegment l2 = new LineSegment(new Point(3, 2), new Point(4, 3));
+        /* Vertical LineSegment */
+        LineSegment l3 = new LineSegment(new Point(4, 3), new Point(4, 5));
 
         Assert.assertTrue(rect.contains(l1));
         Assert.assertTrue(rect.contains(l2));
@@ -464,14 +464,14 @@ public class RectangleTest {
 
         /* Edge intersection lines */
 
-        /* Horizontal Line */
-        Line l4 = new Line(new Point(3, 3), new Point(6, 3));
-        /* Inclined Line (m > 0)*/
-        Line l5 = new Line(new Point(3, 2), new Point(6, 6));
-        /* Inclined Line (m < 0)*/
-        Line l6 = new Line(new Point(6, 2), new Point(3, 6));
-        /* Vertical Line */
-        Line l7 = new Line(new Point(4, 3), new Point(4, 6));
+        /* Horizontal LineSegment */
+        LineSegment l4 = new LineSegment(new Point(3, 3), new Point(6, 3));
+        /* Inclined LineSegment (m > 0)*/
+        LineSegment l5 = new LineSegment(new Point(3, 2), new Point(6, 6));
+        /* Inclined LineSegment (m < 0)*/
+        LineSegment l6 = new LineSegment(new Point(6, 2), new Point(3, 6));
+        /* Vertical LineSegment */
+        LineSegment l7 = new LineSegment(new Point(4, 3), new Point(4, 6));
 
         Assert.assertTrue(rect.contains(l4));
         Assert.assertTrue(rect.contains(l5));

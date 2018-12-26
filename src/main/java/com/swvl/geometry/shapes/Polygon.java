@@ -74,7 +74,7 @@ public class Polygon extends Shape {
     @Override
     public double distanceTo(Point p) {
         /* Pointer to current edge in polygon */
-        Line edge = new Line();
+        LineSegment edge = new LineSegment();
         double minDistance = Double.MAX_VALUE;
 
         for (int i = 0; i < points.length - 1; ++i) {
@@ -99,8 +99,8 @@ public class Polygon extends Shape {
         if (shape instanceof Polygon)
             return isPolygonIntersection((Polygon) shape);
 
-        if (shape instanceof Line)
-            return isLineIntersected((Line) shape);
+        if (shape instanceof LineSegment)
+            return isLineIntersected((LineSegment) shape);
 
         throw new OperationNotSupportedException("isIntersected operation in Polygon does not support " + shape.getClass());
     }
@@ -118,10 +118,10 @@ public class Polygon extends Shape {
                 maxX = Math.max(maxX, points[i].x);
 
         /* Create a point for line segment from p to infinite */
-        Line infinityLine = new Line(point, new Point(maxX + 1e3, point.y));
+        LineSegment infinityLine = new LineSegment(point, new Point(maxX + 1e3, point.y));
 
         /* Pointer to current edge in polygon */
-        Line edge = new Line();
+        LineSegment edge = new LineSegment();
 
         /* Count intersections of the above line with sides of polygon */
         int count = 0;
@@ -190,9 +190,9 @@ public class Polygon extends Shape {
         return false;
     }
 
-    private boolean isLineIntersected(Line line) throws OperationNotSupportedException {
+    private boolean isLineIntersected(LineSegment line) throws OperationNotSupportedException {
         /* Pointer to current edge in polygon */
-        Line edge = new Line();
+        LineSegment edge = new LineSegment();
 
         /* Iterate over edges of all polygons and check for intersection with line */
         for (int i = 0; i < points.length - 1; ++i) {
@@ -265,8 +265,8 @@ public class Polygon extends Shape {
         if (shape instanceof Point)
             return isPointIntersection((Point) shape);
 
-        if (shape instanceof Line) {
-            Line line = (Line) shape;
+        if (shape instanceof LineSegment) {
+            LineSegment line = (LineSegment) shape;
             return isPointIntersection(line.getStartPoint())
                     && isPointIntersection(line.getEndPoint());
         }

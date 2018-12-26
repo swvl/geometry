@@ -7,16 +7,16 @@ import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
 
-public class Line extends Shape {
+public class LineSegment extends Shape {
     private Point startPoint; // Start point of line segment
     private Point endPoint; // End point of line segment
 
-    /* Line equation params ax + by + c = 0*/
+    /* LineSegment equation params ax + by + c = 0*/
     public double a;
     public double b;
     public double c;
 
-    public Line() {
+    public LineSegment() {
 
     }
 
@@ -35,7 +35,7 @@ public class Line extends Shape {
         }
     }
 
-    public Line(Point a, Point b) {
+    public LineSegment(Point a, Point b) {
         init(a, b);
     }
 
@@ -93,10 +93,10 @@ public class Line extends Shape {
             return rect.isIntersected(this);
         }
 
-        if (shape instanceof Line)
-            return isLineIntersection((Line) shape);
+        if (shape instanceof LineSegment)
+            return isLineIntersection((LineSegment) shape);
 
-        throw new OperationNotSupportedException("isIntersected operation in Line does not support " + shape.getClass());
+        throw new OperationNotSupportedException("isIntersected operation in LineSegment does not support " + shape.getClass());
     }
 
     /**
@@ -129,7 +129,7 @@ public class Line extends Shape {
         return Math.abs(ab - (ap + pb)) < Point.EPS;
     }
 
-    private boolean isLineIntersection(Line line) {
+    private boolean isLineIntersection(LineSegment line) {
 
         /* Check for general case that line segments intersect at boundaries*/
         if (this.startPoint.equals(line.startPoint)
@@ -154,7 +154,7 @@ public class Line extends Shape {
 
     @Override
     public Shape clone() {
-        return new Line(new Point(startPoint.x, startPoint.y),
+        return new LineSegment(new Point(startPoint.x, startPoint.y),
                 new Point(endPoint.x, endPoint.y));
     }
 
@@ -171,9 +171,9 @@ public class Line extends Shape {
             return isPointIntersection((Point) shape);
 
 
-        if (shape instanceof Line) {
+        if (shape instanceof LineSegment) {
             /* Check that both points of line exist on invoker line */
-            Line line = (Line) shape;
+            LineSegment line = (LineSegment) shape;
             return this.isPointIntersection(line.startPoint)
                     && this.isPointIntersection(line.endPoint);
         }
@@ -183,7 +183,7 @@ public class Line extends Shape {
             return rect.contains(this);
         }
 
-        throw new OperationNotSupportedException("Contains operation in Line does not support " + shape.getClass());
+        throw new OperationNotSupportedException("Contains operation in LineSegment does not support " + shape.getClass());
     }
 
     @Override
@@ -236,10 +236,10 @@ public class Line extends Shape {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof Line))
+        if (!(obj instanceof LineSegment))
             return false;
 
-        Line line = (Line) obj;
+        LineSegment line = (LineSegment) obj;
 
         return this.startPoint.equals(line.startPoint)
                 && this.endPoint.equals(line.endPoint);
