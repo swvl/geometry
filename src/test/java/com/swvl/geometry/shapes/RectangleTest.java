@@ -113,6 +113,24 @@ public class RectangleTest {
         Assert.assertTrue(rect.contains(new Point(3.1, 2.1)));
         Assert.assertTrue(rect.contains(new Point(3.9, 3.9)));
         Assert.assertTrue(rect.contains(new Point(2.001, 2.0001)));
+
+        // outside rectangle due to high y-coordinate
+        Assert.assertFalse(rect.contains(new Point(3, 5)));
+        Assert.assertFalse(rect.contains(new Point(3, 4.2111)));
+
+
+        // outside rectangle due to low y-coordinate
+        Assert.assertFalse(rect.contains(new Point(3, -5)));
+        Assert.assertFalse(rect.contains(new Point(3, 1.99121)));
+
+
+        // outside rectangle due to high x-coordinate
+        Assert.assertFalse(rect.contains(new Point(6, 3)));
+        Assert.assertFalse(rect.contains(new Point(4.12222, 3)));
+
+        // outside rectangle due to low x-coordinate
+        Assert.assertFalse(rect.contains(new Point(1, 3)));
+        Assert.assertFalse(rect.contains(new Point(1.999221, 3)));
     }
 
     @Test
@@ -169,6 +187,24 @@ public class RectangleTest {
         Assert.assertTrue(rect.isIntersected(new Point(3.1, 2.1)));
         Assert.assertTrue(rect.isIntersected(new Point(3.9, 3.9)));
         Assert.assertTrue(rect.isIntersected(new Point(2.001, 2.0001)));
+
+        // outside rectangle due to high y-coordinate
+        Assert.assertFalse(rect.isIntersected(new Point(3, 5)));
+        Assert.assertFalse(rect.isIntersected(new Point(3, 4.2111)));
+
+
+        // outside rectangle due to low y-coordinate
+        Assert.assertFalse(rect.isIntersected(new Point(3, -5)));
+        Assert.assertFalse(rect.isIntersected(new Point(3, 1.99121)));
+
+
+        // outside rectangle due to high x-coordinate
+        Assert.assertFalse(rect.isIntersected(new Point(6, 3)));
+        Assert.assertFalse(rect.isIntersected(new Point(4.12222, 3)));
+
+        // outside rectangle due to low x-coordinate
+        Assert.assertFalse(rect.isIntersected(new Point(1, 3)));
+        Assert.assertFalse(rect.isIntersected(new Point(1.999221, 3)));
     }
 
 

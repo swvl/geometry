@@ -89,7 +89,7 @@ public class LineSegment extends Shape {
             return isPointIntersection((Point) shape);
 
         if (shape instanceof Rectangle)
-            shape.isIntersected(this);
+            return shape.isIntersected(this);
 
         if (shape instanceof LineSegment)
             return isLineIntersection((LineSegment) shape);

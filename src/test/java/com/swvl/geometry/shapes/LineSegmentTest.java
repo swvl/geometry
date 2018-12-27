@@ -214,7 +214,7 @@ public class LineSegmentTest {
     /**
      * LineSegment intersect the left side of rectangle
      */
-    @Test
+    @Test(expected = OperationNotSupportedException.class)
     public void testIntersectionWithRectangleLeftSide() throws OperationNotSupportedException {
         Rectangle rect = new Rectangle(3, 2, 6, 4);
 
@@ -232,15 +232,16 @@ public class LineSegmentTest {
         Assert.assertTrue(line2.isIntersected(rect));
         Assert.assertTrue(line3.isIntersected(rect));
 
-        Assert.assertFalse(line1.contains(rect));
-        Assert.assertFalse(line2.contains(rect));
-        Assert.assertFalse(line3.contains(rect));
+        /* Should throw exception because line segment does not contain rectangle! */
+        line1.contains(rect);
+        line2.contains(rect);
+        line3.contains(rect);
     }
 
     /**
      * LineSegment intersect the right side of rectangle
      */
-    @Test
+    @Test(expected = OperationNotSupportedException.class)
     public void testIntersectionWithRectangleRightSide() throws OperationNotSupportedException {
         Rectangle rect = new Rectangle(3, 2, 6, 4);
 
@@ -255,15 +256,16 @@ public class LineSegmentTest {
         Assert.assertTrue(line2.isIntersected(rect));
         Assert.assertTrue(line3.isIntersected(rect));
 
-        Assert.assertFalse(line1.contains(rect));
-        Assert.assertFalse(line2.contains(rect));
-        Assert.assertFalse(line3.contains(rect));
+        /* Should throw exception because line segment does not contain rectangle! */
+        line1.contains(rect);
+        line2.contains(rect);
+        line3.contains(rect);
     }
 
     /**
      * LineSegment intersect the upper side of rectangle
      */
-    @Test
+    @Test(expected = OperationNotSupportedException.class)
     public void testIntersectionWithRectangleUpperSide() throws OperationNotSupportedException {
         Rectangle rect = new Rectangle(3, 2, 6, 4);
 
@@ -280,16 +282,17 @@ public class LineSegmentTest {
         Assert.assertTrue(line2.isIntersected(rect));
         Assert.assertTrue(line3.isIntersected(rect));
 
-        Assert.assertFalse(line1.contains(rect));
-        Assert.assertFalse(line2.contains(rect));
-        Assert.assertFalse(line3.contains(rect));
+        /* Should throw exception because line segment does not contain rectangle! */
+        line1.contains(rect);
+        line2.contains(rect);
+        line3.contains(rect);
     }
 
 
     /**
      * LineSegment intersect the bottom side of rectangle
      */
-    @Test
+    @Test(expected = OperationNotSupportedException.class)
     public void testIntersectionWithRectangleBottomSide() throws OperationNotSupportedException {
         Rectangle rect = new Rectangle(3, 2, 6, 4);
 
@@ -306,13 +309,13 @@ public class LineSegmentTest {
         Assert.assertTrue(line2.isIntersected(rect));
         Assert.assertTrue(line3.isIntersected(rect));
 
-        Assert.assertFalse(line1.contains(rect));
-        Assert.assertFalse(line2.contains(rect));
-        Assert.assertFalse(line3.contains(rect));
-
+        /* Should throw exception because line segment does not contain rectangle! */
+        line1.contains(rect);
+        line2.contains(rect);
+        line3.contains(rect);
     }
 
-    @Test
+    @Test(expected = OperationNotSupportedException.class)
     public void testLineIsInRectangle() throws OperationNotSupportedException {
         Rectangle rect = new Rectangle(3, 2, 6, 6);
 
@@ -342,15 +345,15 @@ public class LineSegmentTest {
         /* Vertical LineSegment */
         LineSegment l7 = new LineSegment(new Point(4, 3), new Point(4, 6));
 
-        Assert.assertTrue(l4.contains(rect));
-        Assert.assertTrue(l5.contains(rect));
-        Assert.assertTrue(l6.contains(rect));
-        Assert.assertTrue(l7.contains(rect));
+        /* Should throw exception because line segment does not contain rectangle! */
+        l4.contains(rect);
+        l5.contains(rect);
+        l6.contains(rect);
+        l7.contains(rect);
 
         Assert.assertTrue(l4.isIntersected(rect));
         Assert.assertTrue(l5.isIntersected(rect));
         Assert.assertTrue(l6.isIntersected(rect));
         Assert.assertTrue(l7.isIntersected(rect));
-
     }
 }
