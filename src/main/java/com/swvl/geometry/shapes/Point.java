@@ -15,7 +15,7 @@ import java.io.IOException;
  * @author Hatem Morgan
  */
 public class Point extends Shape implements WritableComparable<Point> {
-    public final static double EPS = 1e-6; // Epsilon error for comparing floating points
+    public final static double EPS = 1e-9; // Epsilon error for comparing floating points
 
     public double x;
     public double y;

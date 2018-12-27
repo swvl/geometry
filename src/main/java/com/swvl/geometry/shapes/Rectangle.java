@@ -437,8 +437,8 @@ public class Rectangle extends Shape implements WritableComparable<Rectangle> {
 
 
     public static void main(String[] args) throws OperationNotSupportedException {
-        Rectangle range = new Rectangle(3.0, 2.0, 6.0, 4.0);
-        Rectangle rect = new Rectangle(2.0, 4.0, 6.0, 6.0);
+        Rectangle range = new Rectangle(29.9167383, 31.2121773, 29.9677083, 31.2476417);
+        Rectangle rect = new Rectangle(29.7652217, 31.0943067, 29.9645518, 31.2121767);
 
         System.out.println(range.isIntersected(rect));
         System.out.println(range.isEdgeIntersection(rect));
