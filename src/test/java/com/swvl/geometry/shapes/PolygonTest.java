@@ -175,8 +175,50 @@ public class PolygonTest {
 
 
     @Test
-    public void testRectangleIntersectionAndContains() {
+    public void testRectangleIntersectionAndContains() throws OperationNotSupportedException {
+        Rectangle rect1 = new Rectangle(5, 10, 12, 15); // minimum point inside poly1
+        Assert.assertTrue(poly1.isIntersected(rect1));
+        Assert.assertFalse(poly1.contains(rect1));
 
+        Rectangle rect2 = new Rectangle(-1, -1, 5, 15); // maximum point equal vertex
+        Assert.assertTrue(poly1.isIntersected(rect2));
+        Assert.assertFalse(poly1.contains(rect2));
+
+        Rectangle rect3 = new Rectangle(-2, 2, 5, 5); // maximum point inside poly1
+        Assert.assertTrue(poly1.isIntersected(rect3));
+        Assert.assertFalse(poly1.contains(rect3));
+
+        Rectangle rect4 = new Rectangle(2, -2, 3, 16); // non of rectangle points in poly1
+        Assert.assertTrue(poly1.isIntersected(rect4));
+        Assert.assertFalse(poly1.contains(rect4));
+
+        Rectangle rect5 = new Rectangle(2, 2, 8, 8); // rectangle inside poly1
+        Assert.assertTrue(poly1.isIntersected(rect5));
+        Assert.assertTrue(poly1.contains(rect5));
+
+        Rectangle rect6 = new Rectangle(-1, -1, 20, 20); // poly1 inside rectanlge
+        Assert.assertTrue(poly1.isIntersected(rect6));
+        Assert.assertFalse(poly1.contains(rect6));
+
+        Rectangle rect7 = new Rectangle(0, 0, 10, 10); // 3 rect edges = 3 poly1 edges
+        Assert.assertTrue(poly1.isIntersected(rect7));
+        Assert.assertTrue(poly1.contains(rect7));
+
+        Rectangle rect8 = new Rectangle(10, 0, 20, 20); // edge intersection
+        Assert.assertTrue(poly1.isIntersected(rect8));
+        Assert.assertFalse(poly1.contains(rect8));
+
+        Rectangle rect9 = new Rectangle(10.0001, 0.421212, 12.1011, 17); // not intersection
+        Assert.assertFalse(poly1.isIntersected(rect9));
+        Assert.assertFalse(poly1.contains(rect9));
+
+        Rectangle rect10 = new Rectangle(1, 14, 3, 15); // no intersection
+        Assert.assertFalse(poly1.isIntersected(rect10));
+        Assert.assertFalse(poly1.contains(rect10));
+
+        Rectangle rect11 = new Rectangle(2, 5, 10, 10); // intersection at concave part of poly2
+        Assert.assertTrue(poly1.isIntersected(rect11));
+        Assert.assertFalse(poly1.contains(rect11));
     }
 
     @Test

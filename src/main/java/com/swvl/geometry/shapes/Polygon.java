@@ -154,6 +154,13 @@ public class Polygon extends Shape {
         Point p2 = new Point(rect.minPoint.x, rect.maxPoint.y); // upper-left point
 
         /* Edges of a rectangle */
+        LineSegment[] rectEdges = new LineSegment[]{
+                new LineSegment(rect.minPoint, p1),
+                new LineSegment(p1, rect.maxPoint),
+                new LineSegment(rect.maxPoint, p2),
+                new LineSegment(p2, rect.minPoint)
+        };
+
         Point[] rectPoints = new Point[]{
                 rect.minPoint,
                 p1,
@@ -161,12 +168,24 @@ public class Polygon extends Shape {
                 p2
         };
 
-        /* Iterate over rectangle points and check if any point is inside the polygon*/
+        /* Iterate over edges for checking intersection of edges without any points intersection */
+        for (LineSegment rectEdge : rectEdges)
+            if (this.isLineIntersected(rectEdge))
+                return true;
+
+
+        /*
+         * Check if rectangle is fully inside the polygon. Thus, no edge intersection
+         * Iterate over rectangle points and check if any point is inside the polygon
+         */
         for (Point rectPoint : rectPoints)
             if (this.isPointIntersection(rectPoint))
                 return true;
 
-        /* Iterate over polygon points and check if any point is inside the rectangle*/
+        /*
+         * Check if polygon is fully inside the rectangle. Thus, no edge intersection
+         * Iterate over polygon points and check if any point is inside the rectangle
+         */
         for (int i = 0; i < points.length - 1; ++i)
             if (rect.isIntersected(points[i]))
                 return true;
@@ -176,12 +195,26 @@ public class Polygon extends Shape {
 
     private boolean isPolygonIntersection(Polygon polygon) throws OperationNotSupportedException {
 
-        /* Iterate over polygon's points and check if any point is inside the invoker polygon*/
+        /* Iterate over edges for checking intersection of edges without any points intersection */
+        LineSegment edge = new LineSegment();
+        for (int i = 0; i < points.length - 1; ++i) {
+            edge.init(points[i], points[i + 1]);
+            if (polygon.isLineIntersected(edge))
+                return true;
+        }
+
+        /*
+         * Check if polygon is fully inside the invoker polygon. Thus, no edge intersection
+         * Iterate over polygon's points and check if any point is inside the invoker polygon
+         */
         for (int i = 0; i < polygon.points.length - 1; ++i)
             if (this.isPointIntersection(polygon.points[i]))
                 return true;
 
-        /* Iterate over invoker polygon points and check if any point is inside polygon*/
+        /*
+         * Check if invoker polygon is fully inside this polygon. Thus, no edge intersection
+         * Iterate over invoker polygon points and check if any point is inside polygon
+         */
         for (int i = 0; i < points.length - 1; ++i)
             if (polygon.isIntersected(points[i]))
                 return true;
