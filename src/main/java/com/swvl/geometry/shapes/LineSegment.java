@@ -179,10 +179,13 @@ public class LineSegment extends Shape {
                     && this.isPointIntersection(line.endPoint);
         }
 
-        if (shape instanceof Rectangle) {
-            Rectangle rect = (Rectangle) shape;
-            return rect.contains(this);
-        }
+        if (shape instanceof Rectangle)
+            throw new OperationNotSupportedException("Check if LineSegment contains" +
+                    " a Rectangle is a fetal error");
+
+        if (shape instanceof Polygon)
+            throw new OperationNotSupportedException("Check if LineSegment contains" +
+                    " a Polygon is a fetal error");
 
         throw new OperationNotSupportedException("Contains operation in LineSegment does not support " + shape.getClass());
     }

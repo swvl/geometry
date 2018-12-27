@@ -254,7 +254,23 @@ public class Rectangle extends Shape implements WritableComparable<Rectangle> {
             return this.isIntersected(line.getStartPoint()) && this.isIntersected(line.getEndPoint());
         }
 
+        if (shape instanceof Polygon)
+            return contiainsPolygon((Polygon) shape);
+
         throw new OperationNotSupportedException("Contains operation in Rectangle does not support " + shape.getClass());
+    }
+
+    private boolean contiainsPolygon(Polygon polygon) {
+        boolean isContained = true;
+
+        /*
+         * Iterate over rectangle points and check if that all points are
+         * inside the polygon
+         */
+        for (int i = 0; i < polygon.getPoints().length; ++i)
+            isContained &= this.contains(polygon.getPoints()[i]);
+
+        return isContained;
     }
 
     private boolean contains(Point p) {

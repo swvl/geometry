@@ -196,7 +196,7 @@ public class PolygonTest {
         Assert.assertTrue(poly1.isIntersected(rect5));
         Assert.assertTrue(poly1.contains(rect5));
 
-        Rectangle rect6 = new Rectangle(-1, -1, 20, 20); // poly1 inside rectanlge
+        Rectangle rect6 = new Rectangle(-1, -1, 20, 20); // poly1 inside rectangle
         Assert.assertTrue(poly1.isIntersected(rect6));
         Assert.assertFalse(poly1.contains(rect6));
 

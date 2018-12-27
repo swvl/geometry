@@ -2,7 +2,6 @@ package com.swvl.geometry.shapes;
 
 import com.swvl.geometry.io.TextSerializerHelper;
 import org.apache.hadoop.io.Text;
-import org.omg.PortableServer.POA;
 
 import javax.naming.OperationNotSupportedException;
 import java.io.DataInput;
@@ -401,5 +400,9 @@ public class Polygon extends Shape {
                 return false;
 
         return true;
+    }
+
+    public Point[] getPoints() {
+        return points;
     }
 }

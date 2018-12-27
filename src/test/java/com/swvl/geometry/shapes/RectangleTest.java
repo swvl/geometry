@@ -485,4 +485,26 @@ public class RectangleTest {
 
     }
 
+    @Test
+    public void testContainsPolygon() throws OperationNotSupportedException {
+        Point[] p1Points = new Point[]{
+                new Point(0, 0),
+                new Point(0, 10),
+                new Point(5, 15),
+                new Point(10, 10),
+                new Point(10, 0),
+                new Point(0, 0)
+        };
+
+        Polygon poly1 = new Polygon(p1Points);
+
+        Rectangle rect1 = new Rectangle(-1, -1, 20, 20); // poly1 inside rectangle
+        Assert.assertTrue(rect1.isIntersected(poly1));
+        Assert.assertTrue(rect1.contains(poly1));
+
+        Rectangle rect2 = new Rectangle(2, 2, 8, 8); // rectangle inside poly1
+        Assert.assertTrue(rect2.isIntersected(poly1));
+        Assert.assertFalse(rect2.contains(poly1));
+    }
+
 }
