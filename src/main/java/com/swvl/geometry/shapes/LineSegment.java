@@ -88,13 +88,14 @@ public class LineSegment extends Shape {
         if (shape instanceof Point)
             return isPointIntersection((Point) shape);
 
-        if (shape instanceof Rectangle) {
-            Rectangle rect = (Rectangle) shape;
-            return rect.isIntersected(this);
-        }
+        if (shape instanceof Rectangle)
+            shape.isIntersected(this);
 
         if (shape instanceof LineSegment)
             return isLineIntersection((LineSegment) shape);
+
+        if (shape instanceof Polygon)
+            return shape.isIntersected(this);
 
         throw new OperationNotSupportedException("isIntersected operation in LineSegment does not support " + shape.getClass());
     }

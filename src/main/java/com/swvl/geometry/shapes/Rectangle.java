@@ -192,6 +192,9 @@ public class Rectangle extends Shape implements WritableComparable<Rectangle> {
             return this.isIntersected(line.getStartPoint()) || this.isIntersected(line.getEndPoint());
         }
 
+        if (shape instanceof Polygon)
+            return shape.isIntersected(this);
+
         throw new OperationNotSupportedException("Contains operation in Rectangle does not support " + shape.getClass());
     }
 

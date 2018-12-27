@@ -84,7 +84,7 @@ public class Point extends Shape implements WritableComparable<Point> {
 
     @Override
     public boolean contains(Shape shape) throws OperationNotSupportedException {
-        throw new OperationNotSupportedException("Check if point contains a rectangle is a fetal error");
+        throw new OperationNotSupportedException("Check if point contains a shape is a fetal error");
     }
 
     @Override
@@ -109,19 +109,19 @@ public class Point extends Shape implements WritableComparable<Point> {
         return new Rectangle(x, y, x, y);
     }
 
-
-    public Shape getIntersection(Shape s) throws OperationNotSupportedException {
-        return getMBR().getIntersection(s);
-    }
-
     @Override
     public boolean isIntersected(Shape s) throws OperationNotSupportedException {
         if (s instanceof Point)
             return this.equals(s);
 
         if (s instanceof Rectangle)
-            s.isIntersected(this);
+            return s.isIntersected(this);
 
+        if (s instanceof LineSegment)
+            return s.isIntersected(this);
+
+        if (s instanceof Polygon)
+            return s.isIntersected(this);
 
         throw new OperationNotSupportedException("isIntersected operation in Point is not supported for " + s.getClass());
     }
