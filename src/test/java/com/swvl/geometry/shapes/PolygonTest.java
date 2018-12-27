@@ -222,7 +222,120 @@ public class PolygonTest {
     }
 
     @Test
-    public void testPolygonIntersectionAndContains() {
+    public void testPolygonIntersectionAndContains() throws OperationNotSupportedException {
+        Point[] polyPOints1 = new Point[]{
+                new Point(-1, -1),
+                new Point(-1, 10),
+                new Point(2, 13),
+                new Point(5, 10),
+                new Point(5, -2),
+                new Point(-1, -1)
+        };
+        Polygon polygon1 = new Polygon(polyPOints1); // one point inside poly1
+        Assert.assertTrue(poly1.isIntersected(polygon1));
+        Assert.assertFalse(poly1.contains(polygon1));
 
+        Point[] polyPOints2 = new Point[]{
+                new Point(-1, -1),
+                new Point(-1, 10),
+                new Point(2, 13),
+                new Point(3, 11),
+                new Point(5, -2),
+                new Point(-1, -1)
+        };
+        Polygon polygon2 = new Polygon(polyPOints2); // edge intersection only
+        Assert.assertTrue(poly1.isIntersected(polygon2));
+        Assert.assertFalse(poly1.contains(polygon2));
+
+        Point[] polyPOints3 = new Point[]{
+                new Point(1, 14),
+                new Point(3, 14),
+                new Point(3, 15),
+                new Point(2, 17),
+                new Point(1, 15),
+                new Point(1, 14)
+        };
+        Polygon polygon3 = new Polygon(polyPOints3); // no intersection
+        Assert.assertFalse(poly1.isIntersected(polygon3));
+        Assert.assertFalse(poly1.contains(polygon3));
+
+
+        Point[] polyPOints4 = new Point[]{
+                new Point(2, 2),
+                new Point(5, 7),
+                new Point(8, 9),
+                new Point(5, 12),
+                new Point(0, 9),
+                new Point(1, 1),
+                new Point(10, 10),
+                new Point(2, 2)
+        };
+
+        Polygon polygon4 = new Polygon(polyPOints4); // polygon4 fully inside poly1
+        Assert.assertTrue(poly1.isIntersected(polygon4));
+        Assert.assertTrue(poly1.contains(polygon4));
+
+        Point[] polyPOints5 = new Point[]{
+                new Point(-1, -1),
+                new Point(20, -1),
+                new Point(20, 20),
+                new Point(15, 17),
+                new Point(13, 16),
+                new Point(11, 20),
+                new Point(-1, 20),
+                new Point(-1, -1)
+        };
+
+        Polygon polygon5 = new Polygon(polyPOints5); // poly1 fully inside polygon5
+        Assert.assertTrue(poly1.isIntersected(polygon5));
+        Assert.assertFalse(poly1.contains(polygon5));
+
+        Point[] polyPOints6 = new Point[]{
+                new Point(0, 0),
+                new Point(0, 10),
+                new Point(5, 15),
+                new Point(10, 10),
+                new Point(10, 0),
+                new Point(0, 0)
+        };
+        Polygon polygon6 = new Polygon(polyPOints6); // same as poly1
+        Assert.assertTrue(poly1.isIntersected(polygon6));
+        Assert.assertTrue(poly1.contains(polygon6));
+
+        Point[] polyPOints7 = new Point[]{
+                new Point(10, 0),
+                new Point(12, 14),
+                new Point(11, 15),
+                new Point(16, 17),
+                new Point(10, 10),
+                new Point(10, 0)
+        };
+        Polygon polygon7 = new Polygon(polyPOints7); // one Edge intersection
+        Assert.assertTrue(poly1.isIntersected(polygon7));
+        Assert.assertFalse(poly1.contains(polygon7));
+
+        Point[] polyPoints8 = new Point[]{
+                new Point(10, 0),
+                new Point(12, 14),
+                new Point(11, 15),
+                new Point(16, 17),
+                new Point(13, 5),
+                new Point(10, 0)
+        };
+        Polygon polygon8 = new Polygon(polyPoints8); // Same vertex
+        Assert.assertTrue(poly1.isIntersected(polygon8));
+        Assert.assertFalse(poly1.contains(polygon8));
+
+        Point[] polyPoints9 = new Point[]{
+                new Point(0, 15),
+                new Point(10, 15),
+                new Point(20, 20),
+                new Point(5, 14),
+                new Point(3, 12),
+                new Point(0, 15)
+        };
+        Polygon polygon9 = new Polygon(polyPoints9); // edge intersect vertex
+        Assert.assertTrue(poly1.isIntersected(polygon9));
+        Assert.assertFalse(poly1.contains(polygon9));
     }
 }
