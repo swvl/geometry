@@ -174,10 +174,10 @@ public class Rectangle extends Shape implements WritableComparable<Rectangle> {
             Rectangle rect = (Rectangle) shape;
 
             /* part of one rectangle is inside the other one */
-            return this.maxPoint.x - rect.minPoint.x > -EPS // this.maxPoint.x > rect.minPoint.x
-                    && this.maxPoint.y - rect.minPoint.y > -EPS // this.maxPoint.y > rect.minPoint.y
-                    && this.minPoint.x - rect.maxPoint.x < EPS // this.minPoint.x < rect.maxPoint.x
-                    && this.minPoint.y - rect.maxPoint.y < EPS; // this.minPoint.y < rect.maxPoint.y
+            return this.maxPoint.x + EPS > rect.minPoint.x // this.maxPoint.x >= rect.minPoint.x
+                    && this.maxPoint.y + EPS > rect.minPoint.y // this.maxPoint.y >= rect.minPoint.y
+                    && rect.maxPoint.x + EPS > this.minPoint.x // this.minPoint.x < rect.maxPoint.x
+                    && rect.maxPoint.y + EPS > this.minPoint.y; // this.minPoint.y < rect.maxPoint.y
         }
 
         /* For a line segment to intersect a rectangle,
@@ -219,39 +219,36 @@ public class Rectangle extends Shape implements WritableComparable<Rectangle> {
         if (shape instanceof Point)
             return Utilities.rectanglePointIntersection((Point) shape, this);
 
-        if (shape instanceof Rectangle) {
-            Rectangle rect = (Rectangle) shape;
-            double maxXDiff = this.maxPoint.x - rect.maxPoint.x;
-            double maxYDiff = this.maxPoint.y - rect.maxPoint.y;
-            double minXDiff = this.minPoint.x - rect.minPoint.x;
-            double minYDiff = this.minPoint.y - rect.minPoint.y;
+        if (shape instanceof Rectangle)
+            return containsPoints(((Rectangle) shape).minPoint,
+                    ((Rectangle) shape).maxPoint);
 
-            return maxXDiff >= -EPS  // this.maxPoint.x >= rect.maxPoint.x
-                    && maxYDiff >= -EPS // this.maxPoint.y >= rect.maxPoint.y
-                    && minXDiff <= EPS // this.minPoint.x >= rect.minPoint.x
-                    && minYDiff <= EPS; // this.minPoint.y >= rect.minPoint.y
-
-        }
 
         /* For a rectangle to contain a line segment,
          * the two points of line segment should be inside the rectangle
          */
-        if (shape instanceof LineSegment) {
-            LineSegment line = (LineSegment) shape;
-            return this.isIntersected(line.p1) && this.isIntersected(line.p2);
-        }
+        if (shape instanceof LineSegment)
+            return containsPoints(((LineSegment) shape).p1, ((LineSegment) shape).p2);
 
         if (shape instanceof Polygon)
-            return contiainsPolygon((Polygon) shape);
+            return containsPoints(((Polygon) shape).points);
 
         throw new OperationNotSupportedException("Contains operation in Rectangle does not support " + shape.getClass());
     }
 
+    /**
+     * Iterate over points and check if that all points are inside the rectangle
+     */
+    private boolean containsPoints(Point... points) throws OperationNotSupportedException {
+        for (Point point : points)
+            if (!this.isIntersected(point))
+                return false;
+
+        return true;
+    }
+
     private boolean contiainsPolygon(Polygon polygon) throws OperationNotSupportedException {
-        /*
-         * Iterate over rectangle points and check if that all points are
-         * inside the polygon
-         */
+
         for (int i = 0; i < polygon.points.length; ++i)
             if (!this.isIntersected(polygon.points[i]))
                 return false;

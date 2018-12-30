@@ -181,9 +181,9 @@ public class Polygon extends Shape {
         validate();
 
         double xSum = 0, ySum = 0;
-        for (Point point : points) {
-            xSum += point.x;
-            ySum += point.y;
+        for (int i = 0; i < points.length - 1; ++i) {
+            xSum += points[i].x;
+            ySum += points[i].y;
         }
 
         return new Point(xSum / (points.length - 1),
@@ -198,7 +198,7 @@ public class Polygon extends Shape {
             return containsPoints((Point) shape);
 
         if (shape instanceof LineSegment)
-            return containsPoints(((LineSegment) shape).p1, ((LineSegment) shape).p2);
+            return containsLineSegment((LineSegment) shape);
 
         if (shape instanceof Rectangle)
             return containsPoints(((Rectangle) shape).minPoint,
@@ -213,12 +213,76 @@ public class Polygon extends Shape {
 
     }
 
+    /**
+     * Iterate over points and check if that all points are inside the polygon
+     */
     private boolean containsPoints(Point... points) throws OperationNotSupportedException {
         for (Point point : points)
             if (!this.isIntersected(point))
                 return false;
 
         return true;
+    }
+
+    private boolean containsLineSegment(LineSegment lineSegment) throws OperationNotSupportedException {
+        /* Check that both the endpoints of line segment are inside the polygon*/
+        if (!containsPoints(lineSegment.p1, lineSegment.p2))
+            return false;
+
+        /*
+         * Both of the end points are inside the polygon.
+         *
+         * if the line is on one of the polygon's edges then return true
+         */
+        LineSegment edge = new LineSegment();
+        for (int i = 0; i < points.length - 1; ++i) {
+            edge.set(points[i], points[i + 1]);
+            if (edge.contains(lineSegment)) // line segment on the edge
+                return true;
+        }
+
+        /*
+         * Both of the end points are inside the polygon and line segment is not on any
+         * of the polygon's edges.
+         *
+         * Check if the line segment goes out and then in the polygon (concave case)
+         * by checking for any edge intersection with the line segment.
+         */
+
+        edge = new LineSegment();
+        for (int i = 0; i < points.length - 1; ++i) {
+            edge.set(points[i], points[i + 1]);
+            if (lineSegmentWithoutEndPointsIntersection(edge, lineSegment)) // edge intersects the line segment
+                return false;
+        }
+
+        /* Both end points are inside polygon and the line is fully inside the polygon */
+        return true;
+    }
+
+    private boolean lineSegmentWithoutEndPointsIntersection(LineSegment l1, LineSegment l2) throws OperationNotSupportedException {
+
+        /* check if lines are parallel*/
+        if (Math.abs(l1.a - l2.a) < EPS && Math.abs(l1.b - l2.b) < EPS)
+            return false;
+
+        /* solve simultaneous equation of two 2 line equation with two unknowns (x,y) */
+        Point p = new Point();
+        p.x = (l2.b * l1.c - l1.b * l2.c) / (l2.a * l1.b - l1.a * l2.b);
+
+        /* check vertical line (b=0) to avoid dividing by zero */
+        if (Math.abs(l1.b) < EPS)
+            p.y = -(l2.a * p.x) - l2.c; // invoker is a vertical line so calculate y from line
+        else
+            p.y = -(l1.a * p.x) - l1.c;
+
+        /* Check that p not equal to any of the end points  */
+        if ((p.equals(l1.p1) || p.equals(l1.p2)
+                || p.equals(l2.p1) || p.equals(l2.p2)))
+            return false;
+
+        /* Check that intersection point is on both lines */
+        return l1.isIntersected(p) && l2.isIntersected(p);
     }
 
     @Override

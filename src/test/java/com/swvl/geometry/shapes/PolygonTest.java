@@ -4,6 +4,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import javax.naming.OperationNotSupportedException;
+import javax.sound.sampled.Line;
 
 public class PolygonTest {
     private static Polygon poly1;
@@ -19,7 +20,7 @@ public class PolygonTest {
                 new Point(0, 0)
         };
 
-        poly1 = new Polygon(p1Points);
+        poly1 = new Polygon(p1Points); // convex polygon
 
         Point[] p2Points = new Point[]{
                 new Point(2, 4),
@@ -34,7 +35,7 @@ public class PolygonTest {
                 new Point(2, 4)
         };
 
-        poly2 = new Polygon(p2Points);
+        poly2 = new Polygon(p2Points); // concave polygon
     }
 
     @Test
@@ -112,19 +113,19 @@ public class PolygonTest {
 
     @Test
     public void testLineIntersectionAndContains() throws OperationNotSupportedException {
-//        LineSegment l1 = new LineSegment(new Point(4.001211, 5.122414),
-//                new Point(20.121, 5.643)); // horizontal line intersect vertical edge
-//        Assert.assertTrue(poly1.isIntersected(l1));
-//        Assert.assertFalse(poly1.contains(l1));
-//
-//        LineSegment l2 = new LineSegment(new Point(8.01221, 10),
-//                new Point(11.0121, 14.1121)); // incline line intersect edge
-//        Assert.assertTrue(poly1.isIntersected(l2));
-//        Assert.assertFalse(poly1.contains(l2));
-//
+        LineSegment l1 = new LineSegment(new Point(4.001211, 5.122414),
+                new Point(20.121, 5.643)); // horizontal line intersect vertical edge
+        Assert.assertTrue(poly1.isIntersected(l1));
+        Assert.assertFalse(poly1.contains(l1));
+
+        LineSegment l2 = new LineSegment(new Point(8.01221, 10),
+                new Point(11.0121, 14.1121)); // incline line intersect edge
+        Assert.assertTrue(poly1.isIntersected(l2));
+        Assert.assertFalse(poly1.contains(l2));
+
         LineSegment l3 = new LineSegment(new Point(4.001211, 15),
                 new Point(20.121, 15)); // horizontal line intersection with vertex
-//        Assert.assertTrue(poly1.isIntersected(l3));
+        Assert.assertTrue(poly1.isIntersected(l3));
         Assert.assertFalse(poly1.contains(l3));
 
         LineSegment l4 = new LineSegment(new Point(4, -10),
@@ -171,6 +172,11 @@ public class PolygonTest {
                 new Point(20.00111, 20.5112));
         Assert.assertTrue(poly2.isIntersected(l12));
         Assert.assertTrue(poly2.contains(l12));
+
+        LineSegment l13 = new LineSegment(new Point(6, 5),
+                new Point(6, 20)); // line pass through concave part of poly2
+        Assert.assertTrue(poly2.isIntersected(l13));
+        Assert.assertFalse(poly2.contains(l13));
     }
 
 
