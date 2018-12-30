@@ -1,10 +1,12 @@
 package com.swvl.geometry.shapes;
 
+import com.swvl.geometry.Utilities;
 import com.swvl.geometry.io.TextSerializerHelper;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.io.WritableComparable;
 
 import javax.naming.OperationNotSupportedException;
+import javax.sound.sampled.Line;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
@@ -171,7 +173,7 @@ public class Rectangle extends Shape implements WritableComparable<Rectangle> {
     @Override
     public boolean isIntersected(Shape shape) throws OperationNotSupportedException {
         if (shape instanceof Point)
-            return contains((Point) shape);
+            return Utilities.rectanglePointIntersection((Point) shape, this);
 
 
         if (shape instanceof Rectangle) {
@@ -187,13 +189,11 @@ public class Rectangle extends Shape implements WritableComparable<Rectangle> {
         /* For a line segment to intersect a rectangle,
          * at least one of its end points should be inside the rectangle
          */
-        if (shape instanceof LineSegment) {
-            LineSegment line = (LineSegment) shape;
-            return this.isIntersected(line.getStartPoint()) || this.isIntersected(line.getEndPoint());
-        }
+        if (shape instanceof LineSegment)
+            return Utilities.rectangelLineSegementIntersection((LineSegment) shape, this);
 
         if (shape instanceof Polygon)
-            return shape.isIntersected(this);
+            return Utilities.polygonRectangleIntersection(this, (Polygon) shape);
 
         throw new OperationNotSupportedException("Contains operation in Rectangle does not support " + shape.getClass());
     }
@@ -230,7 +230,7 @@ public class Rectangle extends Shape implements WritableComparable<Rectangle> {
     @Override
     public boolean contains(Shape shape) throws OperationNotSupportedException {
         if (shape instanceof Point)
-            return contains((Point) shape);
+            return Utilities.rectanglePointIntersection((Point) shape, this);
 
         if (shape instanceof Rectangle) {
             Rectangle rect = (Rectangle) shape;
@@ -260,39 +260,17 @@ public class Rectangle extends Shape implements WritableComparable<Rectangle> {
         throw new OperationNotSupportedException("Contains operation in Rectangle does not support " + shape.getClass());
     }
 
-    private boolean contiainsPolygon(Polygon polygon) {
+    private boolean contiainsPolygon(Polygon polygon) throws OperationNotSupportedException {
         boolean isContained = true;
 
         /*
          * Iterate over rectangle points and check if that all points are
          * inside the polygon
          */
-        for (int i = 0; i < polygon.getPoints().length; ++i)
-            isContained &= this.contains(polygon.getPoints()[i]);
+        for (int i = 0; i < polygon.points.length; ++i)
+            isContained &= this.isIntersected(polygon.points[i]);
 
         return isContained;
-    }
-
-    private boolean contains(Point p) {
-        double minDiffX = this.minPoint.x - p.x;
-        double minDiffY = this.minPoint.y - p.y;
-        double maxDiffX = this.maxPoint.x - p.x;
-        double maxDiffY = this.maxPoint.y - p.y;
-
-        if (minDiffX >= Point.EPS) // to the left of rect.minPoint
-            return false;
-
-        if (minDiffY >= Point.EPS) // to the bottom of rect.minPoint
-            return false;
-
-        if (maxDiffX <= -Point.EPS) // to the right of rect.maxPoint
-            return false;
-
-        if (maxDiffY <= -Point.EPS) // above of rect.maxPoint
-            return false;
-
-        /* borders(edges) or inner intersection */
-        return true;
     }
 
 

@@ -1,9 +1,11 @@
 package com.swvl.geometry.shapes;
 
+import com.swvl.geometry.Utilities;
 import com.swvl.geometry.io.TextSerializerHelper;
 import org.apache.hadoop.io.Text;
 
 import javax.naming.OperationNotSupportedException;
+import javax.sound.sampled.Line;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
@@ -15,20 +17,20 @@ import java.io.IOException;
  */
 public class Polygon extends Shape {
     /*
-     * points, entered in counter clockwise order, 0-based indexing with the first vertex
-     * being equal to the last vertex
+     * points, entered any order either clockwise or anti-clockwise.
+     * Array is 0-based indexing with the first vertex being equal to the last vertex
      */
-    private Point[] points = new Point[]{};
+    public Point[] points = new Point[]{};
     /* Maximum x-coordinate */
-    private double maxX = Double.MIN_VALUE;
+    public double maxX = Double.MIN_VALUE;
     /* Maximum y-coordinate */
-    private double maxY = Double.MIN_VALUE;
+    public double maxY = Double.MIN_VALUE;
     /* Minimum x-coordinate */
-    private double minX = Double.MAX_VALUE;
+    public double minX = Double.MAX_VALUE;
     /* Maximum Y-coordinate */
-    private double minY = Double.MAX_VALUE;
+    public double minY = Double.MAX_VALUE;
     /* flag indicates that init method is called */
-    private boolean isInitialized = false;
+    public boolean isInitialized = false;
 
     public Polygon() {
     }
@@ -91,106 +93,20 @@ public class Polygon extends Shape {
             init(points);
 
         if (shape instanceof Point)
-            return isPointIntersection((Point) shape);
+            return Utilities.polygonPointIntersection((Point) shape, this);
 
         if (shape instanceof Rectangle)
-            return isRectangleIntersection((Rectangle) shape);
+            return Utilities.polygonRectangleIntersection((Rectangle) shape, this);
 
         if (shape instanceof Polygon)
             return isPolygonIntersection((Polygon) shape);
 
         if (shape instanceof LineSegment)
-            return isLineIntersected((LineSegment) shape);
+            return Utilities.polygonLineIntersection((LineSegment) shape, this);
 
         throw new OperationNotSupportedException("isIntersected operation in Polygon does not support " + shape.getClass());
     }
 
-    /**
-     * Returns true if the point p lies inside the polygon
-     * <p>
-     * A point is inside the polygon if either count of intersections is odd or
-     * point lies on an edge of polygon.  If none of the conditions is true, then
-     * point lies outside.
-     */
-    private boolean isPointIntersection(Point point) throws OperationNotSupportedException {
-        if (maxX == Double.MIN_VALUE)
-            for (int i = 0; i < points.length - 1; ++i)
-                maxX = Math.max(maxX, points[i].x);
-
-        /* Create a point for line segment from p to infinite */
-        LineSegment infinityLine = new LineSegment(point, new Point(maxX + 1e3, point.y));
-
-        /* Pointer to current edge in polygon */
-        LineSegment edge = new LineSegment();
-
-        /* Count intersections of the above line with sides of polygon */
-        int count = 0;
-
-
-        for (int i = 0; i < points.length - 1; ++i) {
-            edge.init(points[i], points[i + 1]);
-
-            /*
-             * Check if the infinityLine line segment intersects
-             * with the edge line segment
-             */
-            if (edge.isIntersected(infinityLine)) {
-
-                /* check if it lies on segment. If it lies, return true */
-                if (edge.contains(point))
-                    return true;
-
-                count++;
-            }
-        }
-
-        return count % 2 == 1;
-    }
-
-
-    private boolean isRectangleIntersection(Rectangle rect) throws OperationNotSupportedException {
-        Point p1 = new Point(rect.maxPoint.x, rect.minPoint.y); // bottom-right point
-        Point p2 = new Point(rect.minPoint.x, rect.maxPoint.y); // upper-left point
-
-        /* Edges of a rectangle */
-        LineSegment[] rectEdges = new LineSegment[]{
-                new LineSegment(rect.minPoint, p1),
-                new LineSegment(p1, rect.maxPoint),
-                new LineSegment(rect.maxPoint, p2),
-                new LineSegment(p2, rect.minPoint)
-        };
-
-        Point[] rectPoints = new Point[]{
-                rect.minPoint,
-                p1,
-                rect.maxPoint,
-                p2
-        };
-
-        /* Iterate over edges for checking intersection of edges without any points intersection */
-        for (LineSegment rectEdge : rectEdges)
-            if (this.isLineIntersected(rectEdge))
-                return true;
-
-
-        /*
-         * Check if rectangle is fully inside the polygon. Thus, no edge intersection
-         * Iterate over rectangle points and check if any point is inside the polygon
-         */
-        for (Point rectPoint : rectPoints)
-            if (this.isPointIntersection(rectPoint))
-                return true;
-
-        /*
-         * Check if polygon is fully inside the rectangle. Thus, no edge intersection
-         * Iterate over polygon points and check if any point is inside the rectangle
-         */
-        for (int i = 0; i < points.length - 1; ++i)
-            if (rect.isIntersected(points[i]))
-                return true;
-
-        return false;
-    }
 
     private boolean isPolygonIntersection(Polygon polygon) throws OperationNotSupportedException {
 
@@ -198,7 +114,7 @@ public class Polygon extends Shape {
         LineSegment edge = new LineSegment();
         for (int i = 0; i < points.length - 1; ++i) {
             edge.init(points[i], points[i + 1]);
-            if (polygon.isLineIntersected(edge))
+            if (polygon.isIntersected(edge))
                 return true;
         }
 
@@ -207,7 +123,7 @@ public class Polygon extends Shape {
          * Iterate over polygon's points and check if any point is inside the invoker polygon
          */
         for (int i = 0; i < polygon.points.length - 1; ++i)
-            if (this.isPointIntersection(polygon.points[i]))
+            if (this.isIntersected(polygon.points[i]))
                 return true;
 
         /*
@@ -221,26 +137,6 @@ public class Polygon extends Shape {
         return false;
     }
 
-    private boolean isLineIntersected(LineSegment line) throws OperationNotSupportedException {
-        /* Pointer to current edge in polygon */
-        LineSegment edge = new LineSegment();
-
-        /* Iterate over edges of all polygons and check for intersection with line */
-        for (int i = 0; i < points.length - 1; ++i) {
-            edge.init(points[i], points[i + 1]);
-
-            if (line.isIntersected(edge))
-                return true;
-        }
-
-        /* Check for vertex intersection */
-        for (int i = 0; i < points.length - 1; ++i)
-            if (line.isIntersected(points[i]))
-                return true;
-
-        /* Check if Line is inside the polygon */
-        return this.contains(line);
-    }
 
     /**
      * @param p 1st point
@@ -295,12 +191,12 @@ public class Polygon extends Shape {
             init(points);
 
         if (shape instanceof Point)
-            return isPointIntersection((Point) shape);
+            return this.isIntersected((Point) shape);
 
         if (shape instanceof LineSegment) {
             LineSegment line = (LineSegment) shape;
-            return isPointIntersection(line.getStartPoint())
-                    && isPointIntersection(line.getEndPoint());
+            return this.isIntersected(line.getStartPoint())
+                    && this.isIntersected(line.getEndPoint());
         }
 
         if (shape instanceof Rectangle)
@@ -332,7 +228,7 @@ public class Polygon extends Shape {
          * inside the polygon
          */
         for (Point rectPoint : rectPoints)
-            isContained &= this.isPointIntersection(rectPoint);
+            isContained &= this.isIntersected(rectPoint);
 
         return isContained;
     }
@@ -342,7 +238,7 @@ public class Polygon extends Shape {
 
         /* Iterate over polygon's points and check if any point is inside the invoker polygon*/
         for (int i = 0; i < polygon.points.length - 1; ++i)
-            isContained &= this.isPointIntersection(polygon.points[i]);
+            isContained &= this.isIntersected(polygon.points[i]);
 
         return isContained;
     }
@@ -400,9 +296,5 @@ public class Polygon extends Shape {
                 return false;
 
         return true;
-    }
-
-    public Point[] getPoints() {
-        return points;
     }
 }

@@ -1,5 +1,6 @@
 package com.swvl.geometry.shapes;
 
+import com.swvl.geometry.Utilities;
 import com.swvl.geometry.io.TextSerializerHelper;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.io.WritableComparable;
@@ -84,7 +85,7 @@ public class Point extends Shape implements WritableComparable<Point> {
 
     @Override
     public boolean contains(Shape shape) throws OperationNotSupportedException {
-        throw new OperationNotSupportedException("Check if point contains a shape is a fetal error");
+        throw new OperationNotSupportedException("Check if point contains a shape is a fatal error");
     }
 
     @Override
@@ -110,20 +111,21 @@ public class Point extends Shape implements WritableComparable<Point> {
     }
 
     @Override
-    public boolean isIntersected(Shape s) throws OperationNotSupportedException {
-        if (s instanceof Point)
-            return this.equals(s);
+    public boolean isIntersected(Shape shape) throws OperationNotSupportedException {
+        if (shape instanceof Point)
+            return this.equals(shape);
 
-        if (s instanceof Rectangle)
-            return s.isIntersected(this);
+        if (shape instanceof Rectangle)
+            return Utilities.rectanglePointIntersection(this, (Rectangle) shape);
 
-        if (s instanceof LineSegment)
-            return s.isIntersected(this);
+        if (shape instanceof LineSegment)
+            return Utilities.lineSegmentPointIntersection(this, (LineSegment) shape);
 
-        if (s instanceof Polygon)
-            return s.isIntersected(this);
+        if (shape instanceof Polygon)
+            return Utilities.polygonPointIntersection(this, (Polygon) shape);
 
-        throw new OperationNotSupportedException("isIntersected operation in Point is not supported for " + s.getClass());
+        throw new OperationNotSupportedException("isIntersected operation in Point " +
+                "is not supported for " + shape.getClass());
     }
 
     @Override

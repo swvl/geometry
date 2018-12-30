@@ -4,6 +4,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import javax.naming.OperationNotSupportedException;
+import javax.sound.sampled.Line;
 
 public class RectangleTest {
 
@@ -541,6 +542,28 @@ public class RectangleTest {
         Rectangle rect2 = new Rectangle(2, 2, 8, 8); // rectangle inside poly1
         Assert.assertTrue(rect2.isIntersected(poly1));
         Assert.assertFalse(rect2.contains(poly1));
+    }
+
+    @Test
+    public void testLineSegmentRectangleDoubleEdgesIntersection() throws OperationNotSupportedException {
+        Rectangle rect = new Rectangle(3, 2, 6, 6);
+
+        /* Horizontal line intersects rectangle's vertical edges */
+        LineSegment line1 = new LineSegment(new Point(2, 3), new Point(7, 3));
+
+        Assert.assertTrue(rect.isIntersected(line1));
+        Assert.assertFalse(rect.contains(line1));
+
+        /* Vertical line intersects rectangle's horizontal edges */
+        LineSegment line2 = new LineSegment(new Point(4, 1), new Point(4, 8));
+        Assert.assertTrue(rect.isIntersected(line2));
+        Assert.assertFalse(rect.contains(line2));
+
+
+        /* incline line intersects rectangle's right and bottom sides */
+        LineSegment line3 = new LineSegment(new Point(4, 1), new Point(7, 5));
+        Assert.assertTrue(rect.isIntersected(line3));
+        Assert.assertFalse(rect.contains(line3));
     }
 
 }

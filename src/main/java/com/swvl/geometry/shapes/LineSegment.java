@@ -1,5 +1,6 @@
 package com.swvl.geometry.shapes;
 
+import com.swvl.geometry.Utilities;
 import org.apache.hadoop.io.Text;
 
 import javax.naming.OperationNotSupportedException;
@@ -8,8 +9,8 @@ import java.io.DataOutput;
 import java.io.IOException;
 
 public class LineSegment extends Shape {
-    private Point startPoint; // Start point of line segment
-    private Point endPoint; // End point of line segment
+    public Point startPoint; // Start point of line segment
+    public Point endPoint; // End point of line segment
 
     /* LineSegment equation params ax + by + c = 0*/
     public double a;
@@ -86,13 +87,13 @@ public class LineSegment extends Shape {
     @Override
     public boolean isIntersected(Shape shape) throws OperationNotSupportedException {
         if (shape instanceof Point)
-            return isPointIntersection((Point) shape);
+            return Utilities.lineSegmentPointIntersection((Point) shape, this);
 
         if (shape instanceof Rectangle)
             return shape.isIntersected(this);
 
         if (shape instanceof LineSegment)
-            return isLineIntersection((LineSegment) shape);
+            return isLineSegmentIntersection((LineSegment) shape);
 
         if (shape instanceof Polygon)
             return shape.isIntersected(this);
@@ -100,37 +101,8 @@ public class LineSegment extends Shape {
         throw new OperationNotSupportedException("isIntersected operation in LineSegment does not support " + shape.getClass());
     }
 
-    /**
-     * Check if a point is on the line segment be checking that:
-     * 1- Point lies on the line (by substituting point.x in line equation)
-     * 2- Point lies between a and b
-     *
-     * @param point point to checked for intersection
-     * @return true if point intersect line segment and false otherwise
-     */
-    private boolean isPointIntersection(Point point) {
-        /* Check that point is on line */
-        if (b != 0) {
-            double y = -(a * point.x) - c;
 
-            if (Math.abs(y - point.y) > Point.EPS) // point is not on the line
-                return false;
-        } else {
-            if (Math.abs(point.x - (-c)) > Point.EPS) // vertical line and x != -c
-                return false;
-        }
-
-
-        /* Check if point is between a and b */
-        double ab = startPoint.distanceTo(endPoint);
-        double ap = startPoint.distanceTo(point);
-        double pb = point.distanceTo(endPoint);
-
-        /* point between a and b if dist(a,p) + dist(p, b) == dist(a,b)*/
-        return Math.abs(ab - (ap + pb)) < Point.EPS;
-    }
-
-    private boolean isLineIntersection(LineSegment line) {
+    private boolean isLineSegmentIntersection(LineSegment line) throws OperationNotSupportedException {
 
         /* Check for general case that line segments intersect at boundaries*/
         if (this.startPoint.equals(line.startPoint)
@@ -150,7 +122,7 @@ public class LineSegment extends Shape {
             p.y = -(this.a * p.x) - this.c;
 
         /* Check that intersection point is on both lines */
-        return this.isPointIntersection(p) && line.isPointIntersection(p);
+        return this.isIntersected(p) && line.isIntersected(p);
     }
 
     @Override
@@ -169,23 +141,23 @@ public class LineSegment extends Shape {
     @Override
     public boolean contains(Shape shape) throws OperationNotSupportedException {
         if (shape instanceof Point)
-            return isPointIntersection((Point) shape);
+            return isIntersected((Point) shape);
 
 
         if (shape instanceof LineSegment) {
             /* Check that both points of line exist on invoker line */
             LineSegment line = (LineSegment) shape;
-            return this.isPointIntersection(line.startPoint)
-                    && this.isPointIntersection(line.endPoint);
+            return this.isIntersected(line.startPoint)
+                    && this.isIntersected(line.endPoint);
         }
 
         if (shape instanceof Rectangle)
             throw new OperationNotSupportedException("Check if LineSegment contains" +
-                    " a Rectangle is a fetal error");
+                    " a Rectangle is a fatal error");
 
         if (shape instanceof Polygon)
             throw new OperationNotSupportedException("Check if LineSegment contains" +
-                    " a Polygon is a fetal error");
+                    " a Polygon is a fatal error");
 
         throw new OperationNotSupportedException("Contains operation in LineSegment does not support " + shape.getClass());
     }
