@@ -66,8 +66,8 @@ public class LineSegmentTest {
      */
     private boolean checkAccuracyOfPointDistanceUsingTrigonometry(LineSegment line, Point p) {
         /* Calculate vector ep */
-        double epx = p.x - line.getEndPoint().x;
-        double epy = p.y - line.getEndPoint().y;
+        double epx = p.x - line.p1.x;
+        double epy = p.y - line.p1.y;
 
         /* Magnitude of ep vector */
         double hypotenuse = Math.sqrt(epx * epx + epy * epy);
@@ -80,7 +80,7 @@ public class LineSegmentTest {
         /* Calculate adjacent side using trigonometry a = ||h||cos(theta) */
         double expectedAdjacent = hypotenuse * Math.cos(theta);
 
-        return Math.abs(actualAjacent - expectedAdjacent) < Point.EPS;
+        return Math.abs(actualAjacent - expectedAdjacent) < Shape.EPS;
     }
 
 

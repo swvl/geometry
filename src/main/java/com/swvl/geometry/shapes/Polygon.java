@@ -157,7 +157,7 @@ public class Polygon extends Shape {
         double val = pqx * qry - pqy * qrx;
 
         /* if val = 0 then points are collinear */
-        return val < Point.EPS && val > -Point.EPS;
+        return val < EPS && val > -EPS;
 
     }
 
@@ -195,8 +195,8 @@ public class Polygon extends Shape {
 
         if (shape instanceof LineSegment) {
             LineSegment line = (LineSegment) shape;
-            return this.isIntersected(line.getStartPoint())
-                    && this.isIntersected(line.getEndPoint());
+            return this.isIntersected(line.p1)
+                    && this.isIntersected(line.p2);
         }
 
         if (shape instanceof Rectangle)

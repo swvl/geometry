@@ -24,6 +24,9 @@ import java.io.Serializable;
  * @author Hatem Morgan
  */
 public abstract class Shape implements Writable, Cloneable, TextSerializable, Serializable {
+    public final static double EPS = 1e-9; // Epsilon error for comparing floating points
+
+
     /**
      * Calculates the minimum bounding rectangle for this shape.
      *

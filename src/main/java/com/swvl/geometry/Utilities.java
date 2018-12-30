@@ -1,9 +1,6 @@
 package com.swvl.geometry;
 
-import com.swvl.geometry.shapes.LineSegment;
-import com.swvl.geometry.shapes.Point;
-import com.swvl.geometry.shapes.Polygon;
-import com.swvl.geometry.shapes.Rectangle;
+import com.swvl.geometry.shapes.*;
 
 import javax.naming.OperationNotSupportedException;
 
@@ -122,16 +119,16 @@ public class Utilities {
         double maxDiffX = rectangle.maxPoint.x - point.x;
         double maxDiffY = rectangle.maxPoint.y - point.y;
 
-        if (minDiffX >= Point.EPS) // to the left of rect.minPoint
+        if (minDiffX >= Shape.EPS) // to the left of rect.minPoint
             return false;
 
-        if (minDiffY >= Point.EPS) // to the bottom of rect.minPoint
+        if (minDiffY >= Shape.EPS) // to the bottom of rect.minPoint
             return false;
 
-        if (maxDiffX <= -Point.EPS) // to the right of rect.maxPoint
+        if (maxDiffX <= -Shape.EPS) // to the right of rect.maxPoint
             return false;
 
-        return !(maxDiffY <= -Point.EPS);
+        return !(maxDiffY <= -Shape.EPS);
     }
 
 
@@ -165,8 +162,8 @@ public class Utilities {
                 return true;
 
         /* No Edges intersection thus check if the line is in the rectangle */
-        return rectanglePointIntersection(lineSegment.getStartPoint(), rect)
-                && rectanglePointIntersection(lineSegment.getEndPoint(), rect);
+        return rectanglePointIntersection(lineSegment.p1, rect)
+                && rectanglePointIntersection(lineSegment.p2, rect);
     }
 
     /**
@@ -182,21 +179,21 @@ public class Utilities {
         if (lineSegment.b != 0) {
             double y = -(lineSegment.a * point.x) - lineSegment.c;
 
-            if (Math.abs(y - point.y) > Point.EPS) // point is not on the line
+            if (Math.abs(y - point.y) > Shape.EPS) // point is not on the line
                 return false;
         } else {
-            if (Math.abs(point.x - (-lineSegment.c)) > Point.EPS) // vertical line and x != -c
+            if (Math.abs(point.x - (-lineSegment.c)) > Shape.EPS) // vertical line and x != -c
                 return false;
         }
 
 
-        /* Check if point is between a and b */
-        double ab = lineSegment.startPoint.distanceTo(lineSegment.endPoint);
-        double ap = lineSegment.startPoint.distanceTo(point);
-        double pb = point.distanceTo(lineSegment.endPoint);
+        /* Check if point is between p1 and p2 */
+        double ab = lineSegment.p1.distanceTo(lineSegment.p2);
+        double ap = lineSegment.p1.distanceTo(point);
+        double pb = point.distanceTo(lineSegment.p2);
 
         /* point between a and b if dist(a,p) + dist(p, b) == dist(a,b)*/
-        return Math.abs(ab - (ap + pb)) < Point.EPS;
+        return Math.abs(ab - (ap + pb)) < Shape.EPS;
     }
 
 

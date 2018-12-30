@@ -180,10 +180,10 @@ public class Rectangle extends Shape implements WritableComparable<Rectangle> {
             Rectangle rect = (Rectangle) shape;
 
             /* part of one rectangle is inside the other one */
-            return this.maxPoint.x - rect.minPoint.x > -Point.EPS // this.maxPoint.x > rect.minPoint.x
-                    && this.maxPoint.y - rect.minPoint.y > -Point.EPS // this.maxPoint.y > rect.minPoint.y
-                    && this.minPoint.x - rect.maxPoint.x < Point.EPS // this.minPoint.x < rect.maxPoint.x
-                    && this.minPoint.y - rect.maxPoint.y < Point.EPS; // this.minPoint.y < rect.maxPoint.y
+            return this.maxPoint.x - rect.minPoint.x > -EPS // this.maxPoint.x > rect.minPoint.x
+                    && this.maxPoint.y - rect.minPoint.y > -EPS // this.maxPoint.y > rect.minPoint.y
+                    && this.minPoint.x - rect.maxPoint.x < EPS // this.minPoint.x < rect.maxPoint.x
+                    && this.minPoint.y - rect.maxPoint.y < EPS; // this.minPoint.y < rect.maxPoint.y
         }
 
         /* For a line segment to intersect a rectangle,
@@ -239,10 +239,10 @@ public class Rectangle extends Shape implements WritableComparable<Rectangle> {
             double minXDiff = this.minPoint.x - rect.minPoint.x;
             double minYDiff = this.minPoint.y - rect.minPoint.y;
 
-            return maxXDiff >= -Point.EPS  // this.maxPoint.x >= rect.maxPoint.x
-                    && maxYDiff >= -Point.EPS // this.maxPoint.y >= rect.maxPoint.y
-                    && minXDiff <= Point.EPS // this.minPoint.x >= rect.minPoint.x
-                    && minYDiff <= Point.EPS; // this.minPoint.y >= rect.minPoint.y
+            return maxXDiff >= -EPS  // this.maxPoint.x >= rect.maxPoint.x
+                    && maxYDiff >= -EPS // this.maxPoint.y >= rect.maxPoint.y
+                    && minXDiff <= EPS // this.minPoint.x >= rect.minPoint.x
+                    && minYDiff <= EPS; // this.minPoint.y >= rect.minPoint.y
 
         }
 
@@ -251,7 +251,7 @@ public class Rectangle extends Shape implements WritableComparable<Rectangle> {
          */
         if (shape instanceof LineSegment) {
             LineSegment line = (LineSegment) shape;
-            return this.isIntersected(line.getStartPoint()) && this.isIntersected(line.getEndPoint());
+            return this.isIntersected(line.p1) && this.isIntersected(line.p2);
         }
 
         if (shape instanceof Polygon)
@@ -287,22 +287,22 @@ public class Rectangle extends Shape implements WritableComparable<Rectangle> {
         double maxDiffX = this.maxPoint.x - p.x;
         double maxDiffY = this.maxPoint.y - p.y;
 
-        if (minDiffX >= Point.EPS) // to the left of rect.minPoint
+        if (minDiffX >= EPS) // to the left of rect.minPoint
             return false;
 
-        if (minDiffY >= Point.EPS) // to the bottom of rect.minPoint
+        if (minDiffY >= EPS) // to the bottom of rect.minPoint
             return false;
 
-        if (maxDiffX <= -Point.EPS) // to the right of rect.maxPoint
+        if (maxDiffX <= -EPS) // to the right of rect.maxPoint
             return false;
 
-        if (maxDiffY <= -Point.EPS) // above of rect.maxPoint
+        if (maxDiffY <= -EPS) // above of rect.maxPoint
             return false;
 
         /* p is either to the right or top or equal of rect.minPoint */
 
-        if (maxDiffX >= Point.EPS) // to the right of rect.minPoint and to the left of rect.maxPoint
-            if (maxDiffY >= Point.EPS) // to the top of rect.minPoint and to the bottom of rect.maxPoint
+        if (maxDiffX >= EPS) // to the right of rect.minPoint and to the left of rect.maxPoint
+            if (maxDiffY >= EPS) // to the top of rect.minPoint and to the bottom of rect.maxPoint
                 return true;
 
         /* borders(edges) intersection */
@@ -312,12 +312,12 @@ public class Rectangle extends Shape implements WritableComparable<Rectangle> {
             return true;
 
         /* bottom border (edge): to the right of rect.minPoint with the same y-coordinate and to the left of rect.maxPoint */
-        if (minDiffY < Point.EPS && minDiffY > -Point.EPS)  // y-coordinates of minPoint and Point are equal
-            return minDiffX <= -Point.EPS && maxDiffX >= Point.EPS; // to right of minPoint and to the left of maxPoint
+        if (minDiffY < EPS && minDiffY > -EPS)  // y-coordinates of minPoint and Point are equal
+            return minDiffX <= -EPS && maxDiffX >= EPS; // to right of minPoint and to the left of maxPoint
 
         /* left border (edge): above rect.minPoint with the same x-coordinate and below of rect.maxPoint */
-        if (minDiffX < Point.EPS && minDiffX > -Point.EPS)  // x-coordinates of minPoint and point are equal
-            return minDiffY <= -Point.EPS && maxDiffY >= Point.EPS; // above minPoint and below of maxPoint
+        if (minDiffX < EPS && minDiffX > -EPS)  // x-coordinates of minPoint and point are equal
+            return minDiffY <= -EPS && maxDiffY >= EPS; // above minPoint and below of maxPoint
 
         return false;
     }

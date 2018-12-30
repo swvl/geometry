@@ -9,8 +9,9 @@ import java.io.DataOutput;
 import java.io.IOException;
 
 public class LineSegment extends Shape {
-    public Point startPoint; // Start point of line segment
-    public Point endPoint; // End point of line segment
+    /* End points of a Line Segment*/
+    public Point p1;
+    public Point p2;
 
     /* LineSegment equation params ax + by + c = 0*/
     public double a;
@@ -22,17 +23,17 @@ public class LineSegment extends Shape {
     }
 
     public void init(Point p1, Point p2) {
-        this.startPoint = p1;
-        this.endPoint = p2;
+        this.p1 = p1;
+        this.p2 = p2;
 
-        if (Math.abs(p1.x - p2.x) < Point.EPS) { // vertical line
+        if (Math.abs(p1.x - p2.x) < EPS) { // vertical line
             this.a = 1;
             this.b = 0;
             this.c = -p1.x;
         } else {
-            this.a = -((endPoint.y - startPoint.y) / (endPoint.x - startPoint.x));
+            this.a = -((p2.y - p1.y) / (p2.x - p1.x));
             this.b = 1;  // fix value of b to 1
-            this.c = -(a * startPoint.x) - startPoint.y;
+            this.c = -(a * p1.x) - p1.y;
         }
     }
 
@@ -42,18 +43,18 @@ public class LineSegment extends Shape {
 
     @Override
     public Rectangle getMBR() {
-        return new Rectangle(startPoint, endPoint);
+        return new Rectangle(p1, p2);
     }
 
     @Override
     public double distanceTo(Point p) {
         /* transform line ap to vector*/
-        double apx = p.x - startPoint.x;
-        double apy = p.y - startPoint.y;
+        double apx = p.x - p1.x;
+        double apy = p.y - p1.y;
 
         /* transform line ab to vector*/
-        double abx = endPoint.x - startPoint.x;
-        double aby = endPoint.y - startPoint.y;
+        double abx = p2.x - p1.x;
+        double aby = p2.y - p1.y;
 
         /* Calculate unit vector ab^ of vector ab */
         double vectorMagnitude = Math.sqrt(abx * abx + aby * aby);
@@ -69,18 +70,18 @@ public class LineSegment extends Shape {
 
         /* use pythagoras to calculate perpendicular distance between ap and ab*/
         if (u < 0.0) // closer to a
-            return p.distanceTo(startPoint); // Euclidean distance between p and a
+            return p.distanceTo(p1); // Euclidean distance between p and a
 
 
         if (u > 1.0)  // closer to b
-            return p.distanceTo(endPoint); // Euclidean distance between p and b
+            return p.distanceTo(p2); // Euclidean distance between p and b
 
         /*
          * Translate point a by a scaled magnitude u of vector ab
          * (multiplying ab^ by u to get scaled vector in ab direction)
          */
-        double cx = startPoint.x + (ux * u);
-        double cy = startPoint.y + (uy * u);
+        double cx = p1.x + (ux * u);
+        double cy = p1.y + (uy * u);
         return p.distanceTo(new Point(cx, cy));
     }
 
@@ -105,10 +106,10 @@ public class LineSegment extends Shape {
     private boolean isLineSegmentIntersection(LineSegment line) throws OperationNotSupportedException {
 
         /* Check for general case that line segments intersect at boundaries*/
-        if (this.startPoint.equals(line.startPoint)
-                || this.startPoint.equals(line.endPoint)
-                || this.endPoint.equals(line.startPoint)
-                || this.endPoint.equals(line.endPoint))
+        if (this.p1.equals(line.p1)
+                || this.p1.equals(line.p2)
+                || this.p2.equals(line.p1)
+                || this.p2.equals(line.p2))
             return true;
 
         /* solve simultaneous equation of two 2 line equation with two unknowns (x,y) */
@@ -116,7 +117,7 @@ public class LineSegment extends Shape {
         p.x = (line.b * this.c - this.b * line.c) / (line.a * this.b - this.a * line.b);
 
         /* check vertical line (b=0) to avoid dividing by zero */
-        if (this.b < Point.EPS && this.b > -Point.EPS)
+        if (this.b < EPS && this.b > -EPS)
             p.y = -(line.a * p.x) - line.c; // invoker is a vertical line so calculate y from line
         else
             p.y = -(this.a * p.x) - this.c;
@@ -127,15 +128,15 @@ public class LineSegment extends Shape {
 
     @Override
     public Shape clone() {
-        return new LineSegment(new Point(startPoint.x, startPoint.y),
-                new Point(endPoint.x, endPoint.y));
+        return new LineSegment(new Point(p1.x, p1.y),
+                new Point(p2.x, p2.y));
     }
 
     @Override
     public Point getCenterPoint() {
         return new Point(
-                (startPoint.x + endPoint.x) / 2,
-                (startPoint.y + endPoint.y) / 2);
+                (p1.x + p2.x) / 2,
+                (p1.y + p2.y) / 2);
     }
 
     @Override
@@ -147,8 +148,8 @@ public class LineSegment extends Shape {
         if (shape instanceof LineSegment) {
             /* Check that both points of line exist on invoker line */
             LineSegment line = (LineSegment) shape;
-            return this.isIntersected(line.startPoint)
-                    && this.isIntersected(line.endPoint);
+            return this.isIntersected(line.p1)
+                    && this.isIntersected(line.p2);
         }
 
         if (shape instanceof Rectangle)
@@ -169,45 +170,45 @@ public class LineSegment extends Shape {
 
     @Override
     public void write(DataOutput dataOutput) throws IOException {
-        startPoint.write(dataOutput);
-        endPoint.write(dataOutput);
+        p1.write(dataOutput);
+        p2.write(dataOutput);
     }
 
     @Override
     public void readFields(DataInput dataInput) throws IOException {
-        startPoint = new Point();
-        startPoint.readFields(dataInput);
+        p1 = new Point();
+        p1.readFields(dataInput);
 
-        endPoint = new Point();
-        endPoint.readFields(dataInput);
+        p2 = new Point();
+        p2.readFields(dataInput);
 
-        init(startPoint, endPoint);
+        init(p1, p2);
     }
 
     @Override
     public Text toText(Text text) {
-        startPoint.toText(text);
-        endPoint.toText(text);
+        p1.toText(text);
+        p2.toText(text);
         return text;
     }
 
     @Override
     public void fromText(Text text) {
-        startPoint = new Point();
-        startPoint.fromText(text);
+        p1 = new Point();
+        p1.fromText(text);
 
-        endPoint = new Point();
-        endPoint.fromText(text);
+        p2 = new Point();
+        p2.fromText(text);
 
-        init(startPoint, endPoint);
+        init(p1, p2);
     }
 
-    public Point getStartPoint() {
-        return startPoint;
+    public Point getp1() {
+        return p1;
     }
 
-    public Point getEndPoint() {
-        return endPoint;
+    public Point getp2() {
+        return p2;
     }
 
     @Override
@@ -217,7 +218,7 @@ public class LineSegment extends Shape {
 
         LineSegment line = (LineSegment) obj;
 
-        return this.startPoint.equals(line.startPoint)
-                && this.endPoint.equals(line.endPoint);
+        return this.p1.equals(line.p1)
+                && this.p2.equals(line.p2);
     }
 }
