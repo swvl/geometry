@@ -248,16 +248,15 @@ public class Rectangle extends Shape implements WritableComparable<Rectangle> {
     }
 
     private boolean contiainsPolygon(Polygon polygon) throws OperationNotSupportedException {
-        boolean isContained = true;
-
         /*
          * Iterate over rectangle points and check if that all points are
          * inside the polygon
          */
         for (int i = 0; i < polygon.points.length; ++i)
-            isContained &= this.isIntersected(polygon.points[i]);
+            if (!this.isIntersected(polygon.points[i]))
+                return false;
 
-        return isContained;
+        return true;
     }
 
 

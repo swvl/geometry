@@ -355,5 +355,22 @@ public class LineSegmentTest {
         Assert.assertTrue(l5.isIntersected(rect));
         Assert.assertTrue(l6.isIntersected(rect));
         Assert.assertTrue(l7.isIntersected(rect));
+
+        /* Parallel lines */
+        LineSegment l8 = new LineSegment(new Point(1, 0), new Point(1, 20));
+        LineSegment l9 = new LineSegment(new Point(10, 40), new Point(10, 80));
+
+        Assert.assertFalse(l8.isIntersected(l9));
+        Assert.assertFalse(l8.contains(l9));
+
+        Assert.assertEquals(l8.a, l9.a, 0.0);
+        Assert.assertEquals(l8.b, l9.b, 0.0);
+
+
+        LineSegment l10 = new LineSegment(new Point(1, 2), new Point(4, 8));
+        LineSegment l11 = new LineSegment(new Point(3, 6), new Point(5, 10));
+
+        System.out.println(l10.isIntersected(l11));
+
     }
 }

@@ -176,13 +176,14 @@ public class Utilities {
      */
     public static boolean lineSegmentPointIntersection(Point point, LineSegment lineSegment) {
         /* Check that point is on line */
-        if (lineSegment.b != 0) {
+        if (Math.abs(lineSegment.b) == 1) {
             double y = -(lineSegment.a * point.x) - lineSegment.c;
 
             if (Math.abs(y - point.y) > Shape.EPS) // point is not on the line
                 return false;
+
         } else {
-            if (Math.abs(point.x - (-lineSegment.c)) > Shape.EPS) // vertical line and x != -c
+            if (Math.abs(point.x + lineSegment.c) > Shape.EPS) // vertical line check x that x != -c
                 return false;
         }
 

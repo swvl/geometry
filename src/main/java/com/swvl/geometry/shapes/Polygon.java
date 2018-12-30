@@ -195,56 +195,30 @@ public class Polygon extends Shape {
         validate();
 
         if (shape instanceof Point)
-            return this.isIntersected((Point) shape);
+            return containsPoints((Point) shape);
 
-        if (shape instanceof LineSegment) {
-            LineSegment line = (LineSegment) shape;
-            return this.isIntersected(line.p1)
-                    && this.isIntersected(line.p2);
-        }
+        if (shape instanceof LineSegment)
+            return containsPoints(((LineSegment) shape).p1, ((LineSegment) shape).p2);
 
         if (shape instanceof Rectangle)
-            return containsRectangle((Rectangle) shape);
+            return containsPoints(((Rectangle) shape).minPoint,
+                    new Point(((Rectangle) shape).minPoint.x, ((Rectangle) shape).maxPoint.y),
+                    new Point(((Rectangle) shape).maxPoint.x, ((Rectangle) shape).minPoint.y),
+                    ((Rectangle) shape).maxPoint);
 
         if (shape instanceof Polygon)
-            return containsPolygon((Polygon) shape);
+            return containsPoints(((Polygon) shape).points);
 
         throw new OperationNotSupportedException("contains operation in Polygon does not support " + shape.getClass());
 
     }
 
-    private boolean containsRectangle(Rectangle rect) throws OperationNotSupportedException {
-        Point p1 = new Point(rect.maxPoint.x, rect.minPoint.y); // bottom-right point
-        Point p2 = new Point(rect.minPoint.x, rect.maxPoint.y); // upper-left point
+    private boolean containsPoints(Point... points) throws OperationNotSupportedException {
+        for (Point point : points)
+            if (!this.isIntersected(point))
+                return false;
 
-        /* Edges of a rectangle */
-        Point[] rectPoints = new Point[]{
-                rect.minPoint,
-                p1,
-                rect.maxPoint,
-                p2
-        };
-
-        boolean isContained = true;
-
-        /*
-         * Iterate over rectangle points and check if that all points are
-         * inside the polygon
-         */
-        for (Point rectPoint : rectPoints)
-            isContained &= this.isIntersected(rectPoint);
-
-        return isContained;
-    }
-
-    private boolean containsPolygon(Polygon polygon) throws OperationNotSupportedException {
-        boolean isContained = true;
-
-        /* Iterate over polygon's points and check if any point is inside the invoker polygon*/
-        for (int i = 0; i < polygon.points.length - 1; ++i)
-            isContained &= this.isIntersected(polygon.points[i]);
-
-        return isContained;
+        return true;
     }
 
     @Override
@@ -309,8 +283,4 @@ public class Polygon extends Shape {
     }
 
 
-    public void setPoints(Point[] points) {
-        this.points = points;
-        validate();
-    }
 }

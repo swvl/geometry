@@ -60,44 +60,63 @@ public class LineSegment extends Shape {
     @Override
     public Rectangle getMBR() {
         validate();
-        return new Rectangle(p1, p2);
+
+        double minX, minY, maxX, maxY;
+
+        if (p1.x - p2.x > -EPS) {
+            maxX = p1.x;
+            minX = p2.x;
+        } else {
+            maxX = p2.x;
+            minX = p1.x;
+        }
+
+        if (p1.y - p2.y > -EPS) {
+            maxY = p1.y;
+            minY = p2.y;
+        } else {
+            maxY = p2.y;
+            minY = p1.y;
+        }
+
+        return new Rectangle(minX, minY, maxX, maxY);
     }
 
     @Override
     public double distanceTo(Point p) {
         validate();
 
-        /* transform line ap to vector*/
+        /* transform line p1p to vector*/
         double apx = p.x - p1.x;
         double apy = p.y - p1.y;
 
-        /* transform line ab to vector*/
+        /* transform line p1p2 to vector*/
         double abx = p2.x - p1.x;
         double aby = p2.y - p1.y;
 
-        /* Calculate unit vector ab^ of vector ab */
+        /* Calculate unit vector p1p2^ of vector p1p2 */
         double vectorMagnitude = Math.sqrt(abx * abx + aby * aby);
         double ux = abx / vectorMagnitude;
         double uy = aby / vectorMagnitude;
 
         /*
-         * Get the scalar projection b of vector ap on ab.
-         * s = ||ap|| * cosθ =  dotProduct(ap, ab^) / ||ab^||
-         * We use the unit vector of ab because magnitude of unit vector = 1
+         * Get the scalar projection b of vector p1p on p1p1.
+         * s = ||p1p|| * cosθ =  dotProduct(p1p, p1p2^) / ||p1p2^||
+         * We use the unit vector of p1p2 because magnitude of unit vector = 1
          */
         double u = apx * ux + apy * uy;
 
-        /* use pythagoras to calculate perpendicular distance between ap and ab*/
-        if (u < 0.0) // closer to a
-            return p.distanceTo(p1); // Euclidean distance between p and a
+        /* use pythagoras to calculate perpendicular distance between p1p and p1p2*/
+        if (u / vectorMagnitude < 0.0) // closer to a
+            return p.distanceTo(p1); // Euclidean distance between p and p1
 
 
-        if (u > 1.0)  // closer to b
-            return p.distanceTo(p2); // Euclidean distance between p and b
+        if (u / vectorMagnitude > 1.0)  // closer to b
+            return p.distanceTo(p2); // Euclidean distance between p and p2
 
         /*
-         * Translate point a by a scaled magnitude u of vector ab
-         * (multiplying ab^ by u to get scaled vector in ab direction)
+         * Translate point a by a scaled magnitude u of vector p1p2
+         * (multiplying p1p2^ by u to get scaled vector in p1p2 direction)
          */
         double cx = p1.x + (ux * u);
         double cy = p1.y + (uy * u);
@@ -125,20 +144,24 @@ public class LineSegment extends Shape {
 
 
     private boolean isLineSegmentIntersection(LineSegment line) throws OperationNotSupportedException {
-
-        /* Check for general case that line segments intersect at boundaries*/
-        if (this.p1.equals(line.p1)
-                || this.p1.equals(line.p2)
-                || this.p2.equals(line.p1)
-                || this.p2.equals(line.p2))
+        /*
+         * Check for general that one of the line segments has an intersection
+         * between any of its end points with the other line segment
+         */
+        if (this.isIntersected(line.p1) || this.isIntersected(line.p2)
+                || line.isIntersected(this.p1) || line.isIntersected(this.p2))
             return true;
+
+        /* check if lines are parallel*/
+        if (Math.abs(this.a - line.a) < EPS && Math.abs(this.b - line.b) < EPS)
+            return false;
 
         /* solve simultaneous equation of two 2 line equation with two unknowns (x,y) */
         Point p = new Point();
         p.x = (line.b * this.c - this.b * line.c) / (line.a * this.b - this.a * line.b);
 
         /* check vertical line (b=0) to avoid dividing by zero */
-        if (this.b < EPS && this.b > -EPS)
+        if (Math.abs(b) < EPS)
             p.y = -(line.a * p.x) - line.c; // invoker is a vertical line so calculate y from line
         else
             p.y = -(this.a * p.x) - this.c;
@@ -150,8 +173,7 @@ public class LineSegment extends Shape {
     @Override
     public Shape clone() {
         validate();
-        return new LineSegment(new Point(p1.x, p1.y),
-                new Point(p2.x, p2.y));
+        return new LineSegment(p1.clone(), p2.clone());
     }
 
     @Override
@@ -176,14 +198,6 @@ public class LineSegment extends Shape {
             return this.isIntersected(line.p1)
                     && this.isIntersected(line.p2);
         }
-
-        if (shape instanceof Rectangle)
-            throw new OperationNotSupportedException("Check if LineSegment contains" +
-                    " a Rectangle is a fatal error");
-
-        if (shape instanceof Polygon)
-            throw new OperationNotSupportedException("Check if LineSegment contains" +
-                    " a Polygon is a fatal error");
 
         throw new OperationNotSupportedException("Contains operation in LineSegment does not support " + shape.getClass());
     }
