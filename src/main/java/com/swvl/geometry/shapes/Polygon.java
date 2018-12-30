@@ -158,7 +158,7 @@ public class Polygon extends Shape {
         double val = pqx * qry - pqy * qrx;
 
         /* if val = 0 then points are collinear */
-        return val < EPS && val > -EPS;
+        return Math.abs(val) < EPS;
 
     }
 
