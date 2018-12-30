@@ -5,7 +5,6 @@ import com.swvl.geometry.io.TextSerializerHelper;
 import org.apache.hadoop.io.Text;
 
 import javax.naming.OperationNotSupportedException;
-import javax.sound.sampled.Line;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
@@ -29,17 +28,20 @@ public class Polygon extends Shape {
     public double minX = Double.MAX_VALUE;
     /* Maximum Y-coordinate */
     public double minY = Double.MAX_VALUE;
-    /* flag indicates that init method is called */
-    public boolean isInitialized = false;
 
     public Polygon() {
     }
 
     public Polygon(Point[] points) {
-        init(points);
+        this.points = points;
+        validate();
     }
 
-    public void init(Point[] points) {
+    /**
+     * Validate that points of polygon is initialized and calculate
+     * the fields of the polygon.
+     */
+    private void validate() {
 
         if (points.length < 3)
             throw new IllegalArgumentException("Number of point for polygon must " +
@@ -50,9 +52,6 @@ public class Polygon extends Shape {
             throw new IllegalArgumentException("First vertex and last vertex must be same");
 
 
-        this.points = points;
-
-
         for (Point point : points) {
             double x = point.x;
             minX = Math.min(minX, x);
@@ -61,26 +60,27 @@ public class Polygon extends Shape {
             minY = Math.min(minY, y);
             maxY = Math.max(maxY, y);
         }
-
-        isInitialized = true;
     }
 
     @Override
     public Rectangle getMBR() {
-        if (!isInitialized)
-            init(points);
+        validate();
 
         return new Rectangle(minX, minY, maxX, maxY);
     }
 
     @Override
     public double distanceTo(Point p) {
+        validate();
+
         /* Pointer to current edge in polygon */
         LineSegment edge = new LineSegment();
         double minDistance = Double.MAX_VALUE;
 
         for (int i = 0; i < points.length - 1; ++i) {
-            edge.init(points[i], points[i + 1]);
+            edge.set(this.points[i], this.points[i + 1]);
+
+
             minDistance = Math.min(minDistance, edge.distanceTo(p));
         }
 
@@ -89,8 +89,7 @@ public class Polygon extends Shape {
 
     @Override
     public boolean isIntersected(Shape shape) throws OperationNotSupportedException {
-        if (!isInitialized)
-            init(points);
+        validate();
 
         if (shape instanceof Point)
             return Utilities.polygonPointIntersection((Point) shape, this);
@@ -113,7 +112,9 @@ public class Polygon extends Shape {
         /* Iterate over edges for checking intersection of edges without any points intersection */
         LineSegment edge = new LineSegment();
         for (int i = 0; i < points.length - 1; ++i) {
-            edge.init(points[i], points[i + 1]);
+            edge.set(this.points[i], this.points[i + 1]);
+
+
             if (polygon.isIntersected(edge))
                 return true;
         }
@@ -163,6 +164,8 @@ public class Polygon extends Shape {
 
     @Override
     public Polygon clone() {
+        validate();
+
         Point[] clonedPoints = new Point[points.length];
         for (int i = 0; i < points.length - 1; ++i)
             clonedPoints[i] = points[i].clone();
@@ -175,6 +178,8 @@ public class Polygon extends Shape {
      */
     @Override
     public Point getCenterPoint() {
+        validate();
+
         double xSum = 0, ySum = 0;
         for (Point point : points) {
             xSum += point.x;
@@ -187,8 +192,7 @@ public class Polygon extends Shape {
 
     @Override
     public boolean contains(Shape shape) throws OperationNotSupportedException {
-        if (!isInitialized)
-            init(points);
+        validate();
 
         if (shape instanceof Point)
             return this.isIntersected((Point) shape);
@@ -250,6 +254,8 @@ public class Polygon extends Shape {
 
     @Override
     public void write(DataOutput dataOutput) throws IOException {
+        validate();
+
         dataOutput.writeInt(points.length);
         for (Point point : points) point.write(dataOutput);
     }
@@ -266,6 +272,8 @@ public class Polygon extends Shape {
 
     @Override
     public Text toText(Text text) {
+        validate();
+
         TextSerializerHelper.serializeInt(points.length, text, ',');
         for (Point point : points) point.toText(text);
         return text;
@@ -284,6 +292,8 @@ public class Polygon extends Shape {
 
     @Override
     public boolean equals(Object obj) {
+        validate();
+
         if (!(obj instanceof Polygon))
             return false;
 
@@ -296,5 +306,11 @@ public class Polygon extends Shape {
                 return false;
 
         return true;
+    }
+
+
+    public void setPoints(Point[] points) {
+        this.points = points;
+        validate();
     }
 }

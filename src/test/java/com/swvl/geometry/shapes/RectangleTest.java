@@ -4,7 +4,6 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import javax.naming.OperationNotSupportedException;
-import javax.sound.sampled.Line;
 
 public class RectangleTest {
 

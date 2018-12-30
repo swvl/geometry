@@ -22,9 +22,15 @@ public class LineSegment extends Shape {
 
     }
 
-    public void init(Point p1, Point p2) {
-        this.p1 = p1;
-        this.p2 = p2;
+    /**
+     * Validate the two end points of line segment are initialized and calculate
+     * the line segment equation.
+     */
+    private void validate() {
+        if (p1 == null || p2 == null)
+            throw new IllegalArgumentException("The two points of Line Segment are not" +
+                    "Initialized.");
+
 
         if (Math.abs(p1.x - p2.x) < EPS) { // vertical line
             this.a = 1;
@@ -33,21 +39,34 @@ public class LineSegment extends Shape {
         } else {
             this.a = -((p2.y - p1.y) / (p2.x - p1.x));
             this.b = 1;  // fix value of b to 1
-            this.c = -(a * p1.x) - p1.y;
+            this.c = -a * p1.x - p1.y;
         }
     }
 
-    public LineSegment(Point a, Point b) {
-        init(a, b);
+    public LineSegment(Point p1, Point p2) {
+        this.p1 = p1;
+        this.p2 = p2;
+
+        validate();
+    }
+
+    public void set(Point p1, Point p2) {
+        this.p1 = p1;
+        this.p2 = p2;
+
+        validate();
     }
 
     @Override
     public Rectangle getMBR() {
+        validate();
         return new Rectangle(p1, p2);
     }
 
     @Override
     public double distanceTo(Point p) {
+        validate();
+
         /* transform line ap to vector*/
         double apx = p.x - p1.x;
         double apy = p.y - p1.y;
@@ -87,6 +106,8 @@ public class LineSegment extends Shape {
 
     @Override
     public boolean isIntersected(Shape shape) throws OperationNotSupportedException {
+        validate();
+
         if (shape instanceof Point)
             return Utilities.lineSegmentPointIntersection((Point) shape, this);
 
@@ -128,12 +149,14 @@ public class LineSegment extends Shape {
 
     @Override
     public Shape clone() {
+        validate();
         return new LineSegment(new Point(p1.x, p1.y),
                 new Point(p2.x, p2.y));
     }
 
     @Override
     public Point getCenterPoint() {
+        validate();
         return new Point(
                 (p1.x + p2.x) / 2,
                 (p1.y + p2.y) / 2);
@@ -141,8 +164,10 @@ public class LineSegment extends Shape {
 
     @Override
     public boolean contains(Shape shape) throws OperationNotSupportedException {
+        validate();
+
         if (shape instanceof Point)
-            return isIntersected((Point) shape);
+            return isIntersected(shape);
 
 
         if (shape instanceof LineSegment) {
@@ -170,6 +195,8 @@ public class LineSegment extends Shape {
 
     @Override
     public void write(DataOutput dataOutput) throws IOException {
+        validate();
+
         p1.write(dataOutput);
         p2.write(dataOutput);
     }
@@ -182,11 +209,13 @@ public class LineSegment extends Shape {
         p2 = new Point();
         p2.readFields(dataInput);
 
-        init(p1, p2);
+        validate();
     }
 
     @Override
     public Text toText(Text text) {
+        validate();
+
         p1.toText(text);
         p2.toText(text);
         return text;
@@ -200,19 +229,13 @@ public class LineSegment extends Shape {
         p2 = new Point();
         p2.fromText(text);
 
-        init(p1, p2);
-    }
-
-    public Point getp1() {
-        return p1;
-    }
-
-    public Point getp2() {
-        return p2;
+        validate();
     }
 
     @Override
     public boolean equals(Object obj) {
+        validate();
+
         if (!(obj instanceof LineSegment))
             return false;
 

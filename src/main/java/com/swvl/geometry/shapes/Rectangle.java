@@ -6,7 +6,6 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.io.WritableComparable;
 
 import javax.naming.OperationNotSupportedException;
-import javax.sound.sampled.Line;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
@@ -22,8 +21,15 @@ public class Rectangle extends Shape implements WritableComparable<Rectangle> {
 
     final static double EPS = 1e-9; // Epsilon error for comparing floating points
 
+    public void validate() {
+        if (minPoint == null || maxPoint == null)
+            throw new IllegalArgumentException("Bottom-left and Upper-right points" +
+                    "are not initialized.");
+    }
+
     public Rectangle() {
-        this(0, 0, 0, 0);
+        this(Double.MIN_VALUE, Double.MIN_VALUE,
+                Double.MIN_VALUE, Double.MIN_VALUE);
     }
 
     public Rectangle(Point minPoint, Point maxPoint) {
@@ -31,60 +37,54 @@ public class Rectangle extends Shape implements WritableComparable<Rectangle> {
         this.maxPoint = maxPoint;
     }
 
+    public Rectangle(Rectangle rect) {
+        this.minPoint = rect.minPoint.clone();
+        this.maxPoint = rect.maxPoint.clone();
+    }
+
     public Rectangle(double x1, double y1, double x2, double y2) {
         this.minPoint = new Point(x1, y1);
         this.maxPoint = new Point(x2, y2);
     }
 
-    public void set(Shape s) {
-        if (s == null)
-            return;
-
-        Rectangle mbr = s.getMBR();
-        set(mbr);
-    }
-
-    public void set(Rectangle rect) {
-        this.minPoint = rect.minPoint.clone();
-        this.maxPoint = rect.maxPoint.clone();
-    }
-
     public void write(DataOutput out) throws IOException {
+        validate();
+
         minPoint.write(out);
         maxPoint.write(out);
     }
 
     public void readFields(DataInput in) throws IOException {
+        minPoint = new Point();
         minPoint.readFields(in);
+
+        maxPoint = new Point();
         maxPoint.readFields(in);
     }
 
-    /**
-     * Comparison is done by lexicographic ordering of attributes
-     * &lt; minPoint, maxPoint &gt;
-     */
+    @Override
+    public int compareTo(Rectangle rectangle) {
+        validate();
 
-    public int compareTo(Shape s) {
-        Rectangle rect2 = (Rectangle) s;
 
         // Sort by minPoint's x then y
-        if (this.minPoint.x - rect2.minPoint.x < -EPS)
+        if (this.minPoint.x - rectangle.minPoint.x < -EPS)
             return -1;
-        if (this.minPoint.x - rect2.minPoint.x > EPS)
+        if (this.minPoint.x - rectangle.minPoint.x > EPS)
             return 1;
-        if (this.minPoint.y - rect2.minPoint.y < -EPS)
+        if (this.minPoint.y - rectangle.minPoint.y < -EPS)
             return -1;
-        if (this.minPoint.y - rect2.minPoint.y > EPS)
+        if (this.minPoint.y - rectangle.minPoint.y > EPS)
             return 1;
 
         // Sort by maxPoint's x then y
-        if (this.maxPoint.x - rect2.maxPoint.x < -EPS)
+        if (this.maxPoint.x - rectangle.maxPoint.x < -EPS)
             return -1;
-        if (this.maxPoint.x - rect2.maxPoint.x > EPS)
+        if (this.maxPoint.x - rectangle.maxPoint.x > EPS)
             return 1;
-        if (this.maxPoint.y - rect2.maxPoint.y < -EPS)
+        if (this.maxPoint.y - rectangle.maxPoint.y < -EPS)
             return -1;
-        if (this.maxPoint.y - rect2.maxPoint.y > EPS)
+        if (this.maxPoint.y - rectangle.maxPoint.y > EPS)
             return 1;
 
         return 0;
@@ -92,6 +92,8 @@ public class Rectangle extends Shape implements WritableComparable<Rectangle> {
 
     @Override
     public boolean equals(Object obj) {
+        validate();
+
         if (!(obj instanceof Rectangle))
             return false;
 
@@ -101,6 +103,8 @@ public class Rectangle extends Shape implements WritableComparable<Rectangle> {
 
     @Override
     public int hashCode() {
+        validate();
+
         int result;
         long temp;
         temp = Double.doubleToLongBits(this.minPoint.x);
@@ -122,56 +126,46 @@ public class Rectangle extends Shape implements WritableComparable<Rectangle> {
      */
     @Override
     public double distanceTo(Point p) {
-        return this.getCenterPoint().distanceTo(p);
-    }
+        validate();
 
-    /**
-     * Maximum distance to the perimeter of the Rectangle
-     *
-     * @param p
-     * @return
-     */
-    public double getMaxDistanceTo(Point p) {
-        double dx = Math.max(p.x - this.minPoint.x, this.maxPoint.x - p.x);
-        double dy = Math.max(p.y - this.minPoint.y, this.maxPoint.y - p.y);
+        Point p1 = new Point(this.maxPoint.x, this.minPoint.y); // bottom-right point
+        Point p2 = new Point(this.minPoint.x, this.maxPoint.y); // upper-left point
 
-        return Math.sqrt(dx * dx + dy * dy);
-    }
+        /* Edges of a rectangle */
+        LineSegment[] rectEdges = new LineSegment[]{
+                new LineSegment(this.minPoint, p1),
+                new LineSegment(p1, this.maxPoint),
+                new LineSegment(this.maxPoint, p2),
+                new LineSegment(p2, this.minPoint)
+        };
 
-    public double getMinDistanceTo(double px, double py) {
-        double dx, dy;
-        if (px < this.minPoint.x)
-            dx = this.minPoint.x - px;
-        else if (px < this.maxPoint.x)
-            dx = 0;
-        else
-            dx = px - this.maxPoint.x;
+        double distance = Double.MAX_VALUE;
 
-        if (py < this.minPoint.y)
-            dy = this.minPoint.y - py;
-        else if (py < this.maxPoint.y)
-            dy = 0;
-        else
-            dy = py - this.maxPoint.y;
+        for (LineSegment edge : rectEdges)
+            distance = Math.min(distance, edge.distanceTo(p));
 
-        if (dx > 0 && dy > 0)
-            return Math.sqrt(dx * dx + dy * dy);
-        return Math.max(dx, dy);
+        return distance;
     }
 
     @Override
     public Rectangle clone() {
+        validate();
+
         return new Rectangle(minPoint.x, minPoint.y, maxPoint.x, maxPoint.y);
     }
 
     @Override
     public Rectangle getMBR() {
+        validate();
+
         return new Rectangle(minPoint.x, minPoint.y, maxPoint.x, maxPoint.y);
     }
 
 
     @Override
     public boolean isIntersected(Shape shape) throws OperationNotSupportedException {
+        validate();
+
         if (shape instanceof Point)
             return Utilities.rectanglePointIntersection((Point) shape, this);
 
@@ -201,6 +195,8 @@ public class Rectangle extends Shape implements WritableComparable<Rectangle> {
 
     @Override
     public boolean isEdgeIntersection(Shape shape) throws OperationNotSupportedException {
+        validate();
+
         if (shape instanceof Point)
             return isIntersected(shape);
 
@@ -216,19 +212,10 @@ public class Rectangle extends Shape implements WritableComparable<Rectangle> {
 
     }
 
-    public Rectangle getIntersection(Shape s) throws OperationNotSupportedException {
-        if (!s.isIntersected(this))
-            return null;
-        Rectangle r = s.getMBR();
-        double ix1 = Math.max(this.minPoint.x, r.minPoint.x);
-        double ix2 = Math.min(this.maxPoint.x, r.maxPoint.x);
-        double iy1 = Math.max(this.minPoint.y, r.minPoint.y);
-        double iy2 = Math.min(this.maxPoint.y, r.maxPoint.y);
-        return new Rectangle(ix1, iy1, ix2, iy2);
-    }
-
     @Override
     public boolean contains(Shape shape) throws OperationNotSupportedException {
+        validate();
+
         if (shape instanceof Point)
             return Utilities.rectanglePointIntersection((Point) shape, this);
 
@@ -282,6 +269,8 @@ public class Rectangle extends Shape implements WritableComparable<Rectangle> {
      * @return
      */
     public boolean upperOpenBoundedContains(Point p) {
+        validate();
+
         double minDiffX = this.minPoint.x - p.x;
         double minDiffY = this.minPoint.y - p.y;
         double maxDiffX = this.maxPoint.x - p.x;
@@ -322,16 +311,10 @@ public class Rectangle extends Shape implements WritableComparable<Rectangle> {
         return false;
     }
 
-    public Rectangle union(final Shape s) {
-        Rectangle r = s.getMBR();
-        double ux1 = Math.min(this.minPoint.x, r.minPoint.x);
-        double ux2 = Math.max(this.maxPoint.x, r.maxPoint.x);
-        double uy1 = Math.min(this.minPoint.y, r.minPoint.y);
-        double uy2 = Math.max(this.maxPoint.y, r.maxPoint.y);
-        return new Rectangle(ux1, uy1, ux2, uy2);
-    }
 
     public void expand(Point point) {
+        validate();
+
         if (point.x < this.minPoint.x)
             this.minPoint.x = point.x;
         if (point.y < this.minPoint.y)
@@ -343,6 +326,8 @@ public class Rectangle extends Shape implements WritableComparable<Rectangle> {
     }
 
     public void expand(final Shape s) {
+        validate();
+
         Rectangle r = s.getMBR();
         if (r.minPoint.x < this.minPoint.x)
             this.minPoint.x = r.minPoint.x;
@@ -360,12 +345,16 @@ public class Rectangle extends Shape implements WritableComparable<Rectangle> {
 
     @Override
     public Point getCenterPoint() {
+        validate();
+
         return new Point((this.minPoint.x + this.maxPoint.x) / 2, (this.minPoint.y + this.maxPoint.y) / 2);
     }
 
 
     @Override
     public Text toText(Text text) {
+        validate();
+
         TextSerializerHelper.serializeDouble(minPoint.x, text, ',');
         TextSerializerHelper.serializeDouble(minPoint.y, text, ',');
         TextSerializerHelper.serializeDouble(maxPoint.x, text, ',');
@@ -375,53 +364,32 @@ public class Rectangle extends Shape implements WritableComparable<Rectangle> {
 
     @Override
     public void fromText(Text text) {
+        minPoint = new Point();
         minPoint.x = TextSerializerHelper.consumeDouble(text, ',');
         minPoint.y = TextSerializerHelper.consumeDouble(text, ',');
+
+        maxPoint = new Point();
         maxPoint.x = TextSerializerHelper.consumeDouble(text, ',');
         maxPoint.y = TextSerializerHelper.consumeDouble(text, '\0');
     }
 
     @Override
     public String toString() {
+        validate();
+
         return "Rectangle: (" + minPoint.x + "," + minPoint.y + ")-(" + maxPoint.x + "," + maxPoint.y + ")";
     }
 
 
     public double getHeight() {
+        validate();
+
         return maxPoint.y - minPoint.y;
     }
 
     public double getWidth() {
+        validate();
+
         return maxPoint.x - minPoint.x;
-    }
-
-    /**
-     * Returns a new rectangle after translating with the given amount
-     */
-    public Rectangle translate(double dx, double dy) {
-        return new Rectangle(this.minPoint.x + dx, this.minPoint.y + dy, this.maxPoint.x + dx, this.maxPoint.y + dy);
-    }
-
-    public String toWKT() {
-        double x1 = minPoint.x, y1 = minPoint.y, x2 = maxPoint.x, y2 = maxPoint.y;
-        return String.format("POLYGON((%g %g, %g %g, %g %g, %g %g, %g %g))",
-                x1, y1, x1, y2, x2, y2, x2, y1, x1, y1);
-    }
-
-    @Override
-    public int compareTo(Rectangle o) {
-        return compareTo((Shape) o);
-    }
-
-
-    public static void main(String[] args) throws OperationNotSupportedException {
-        Rectangle range = new Rectangle(29.9167383, 31.2121773, 29.9677083, 31.2476417);
-        Rectangle rect = new Rectangle(29.7652217, 31.0943067, 29.9645518, 31.2121767);
-
-        System.out.println(range.isIntersected(rect));
-        System.out.println(range.isEdgeIntersection(rect));
-
-        System.out.println(rect.isIntersected(range));
-        System.out.println(rect.isEdgeIntersection(range));
     }
 }

@@ -28,7 +28,7 @@ public class Utilities {
 
 
         for (int i = 0; i < polygon.points.length - 1; ++i) {
-            edge.init(polygon.points[i], polygon.points[i + 1]);
+            edge.set(polygon.points[i], polygon.points[i + 1]);
 
             /*
              * Check if the infinityLine line segment intersects
@@ -97,7 +97,7 @@ public class Utilities {
 
         /* Iterate over edges of all polygons and check for intersection with line */
         for (int i = 0; i < polygon.points.length - 1; ++i) {
-            edge.init(polygon.points[i], polygon.points[i + 1]);
+            edge.set(polygon.points[i], polygon.points[i + 1]);
 
             if (line.isIntersected(edge))
                 return true;
