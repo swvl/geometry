@@ -8,6 +8,11 @@ import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
 
+/**
+ * Implementation of a Line Segment.
+ *
+ * @author Hatem Morgan
+ */
 public class LineSegment extends Shape {
     /* End points of a Line Segment*/
     public Point p1;

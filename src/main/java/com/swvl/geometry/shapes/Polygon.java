@@ -5,12 +5,13 @@ import com.swvl.geometry.io.TextSerializerHelper;
 import org.apache.hadoop.io.Text;
 
 import javax.naming.OperationNotSupportedException;
+import javax.sound.sampled.Line;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
 
 /**
- * Geometrical Polygon implementation
+ * Implementation of a polygon.
  *
  * @author Hatem Morgan
  */
@@ -195,22 +196,63 @@ public class Polygon extends Shape {
         validate();
 
         if (shape instanceof Point)
-            return containsPoints((Point) shape);
+            return this.isIntersected(shape);
 
         if (shape instanceof LineSegment)
             return containsLineSegment((LineSegment) shape);
 
         if (shape instanceof Rectangle)
-            return containsPoints(((Rectangle) shape).minPoint,
-                    new Point(((Rectangle) shape).minPoint.x, ((Rectangle) shape).maxPoint.y),
-                    new Point(((Rectangle) shape).maxPoint.x, ((Rectangle) shape).minPoint.y),
-                    ((Rectangle) shape).maxPoint);
+            return containsRectangle((Rectangle) shape);
 
         if (shape instanceof Polygon)
-            return containsPoints(((Polygon) shape).points);
+            return containsPolygon((Polygon) shape);
 
         throw new OperationNotSupportedException("contains operation in Polygon does not support " + shape.getClass());
 
+    }
+
+    /**
+     * Check if the polygon contains the rectangle rect
+     *
+     * @param rect rectangle to be checked if it is inside the polygon
+     * @return true if rectangle is inside the polygon
+     */
+    private boolean containsRectangle(Rectangle rect) throws OperationNotSupportedException {
+        Point p1 = new Point(rect.maxPoint.x, rect.minPoint.y); // bottom-right point
+        Point p2 = new Point(rect.minPoint.x, rect.maxPoint.y); // upper-left point
+
+        /* Edges of a rectangle */
+        LineSegment[] rectEdges = new LineSegment[]{
+                new LineSegment(rect.minPoint, p1),
+                new LineSegment(p1, rect.maxPoint),
+                new LineSegment(rect.maxPoint, p2),
+                new LineSegment(p2, rect.minPoint)
+        };
+
+        /* Iterate over edges to check that all of them are inside polygon */
+        for (LineSegment edge : rectEdges)
+            if (!this.containsLineSegment(edge))
+                return false;
+
+        return true;
+    }
+
+    /**
+     * Check if the polygon contains the Polygon polygon
+     *
+     * @param poly polygon to be checked if it is inside this polygon
+     * @return true if poly is inside this polygon
+     */
+    private boolean containsPolygon(Polygon poly) throws OperationNotSupportedException {
+        /* Iterate over edges to check that all of them are inside this polygon */
+        LineSegment edge = new LineSegment();
+        for (int i = 0; i < poly.points.length - 1; ++i) {
+            edge.set(poly.points[i], poly.points[i + 1]);
+            if (!this.containsLineSegment(edge))
+                return false;
+        }
+
+        return true;
     }
 
     /**

@@ -25,7 +25,7 @@ public class PolygonTest {
         Point[] p2Points = new Point[]{
                 new Point(2, 4),
                 new Point(8, 5.01922),
-                new Point(13.0211, 8.6311),
+                new Point(13.0211, 3.9752),
                 new Point(20, 11.2211230),
                 new Point(15.3312, 17.45311),
                 new Point(20.00111, 20.5112),
@@ -222,9 +222,11 @@ public class PolygonTest {
         Assert.assertFalse(poly1.isIntersected(rect10));
         Assert.assertFalse(poly1.contains(rect10));
 
-        Rectangle rect11 = new Rectangle(2, 5, 10, 10); // intersection at concave part of poly2
+        Rectangle rect11 = new Rectangle(6, 5, 10, 20); // one of the edges pass through concave part
         Assert.assertTrue(poly2.isIntersected(rect11));
         Assert.assertFalse(poly2.contains(rect11));
+
+
     }
 
     @Test
@@ -343,5 +345,18 @@ public class PolygonTest {
         Polygon polygon9 = new Polygon(polyPoints9); // edge intersect vertex
         Assert.assertTrue(poly1.isIntersected(polygon9));
         Assert.assertFalse(poly1.contains(polygon9));
+
+        Point[] polyPoints10 = new Point[]{
+                new Point(6, 5),
+                new Point(10, 5),
+                new Point(10, 6),
+                new Point(12, 7),
+                new Point(10, 20),
+                new Point(6, 20),
+                new Point(6, 5)
+        };
+        Polygon polygon10 = new Polygon(polyPoints10);
+        Assert.assertTrue(poly2.isIntersected(polygon10));
+        Assert.assertFalse(poly2.contains(polygon10));
     }
 }

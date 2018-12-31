@@ -11,7 +11,7 @@ import java.io.DataOutput;
 import java.io.IOException;
 
 /**
- * Geometrical point represented by x & y coordinates.
+ * Implementation of a point represented by x & y coordinates.
  *
  * @author Hatem Morgan
  */

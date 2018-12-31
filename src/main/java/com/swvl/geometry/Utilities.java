@@ -4,6 +4,11 @@ import com.swvl.geometry.shapes.*;
 
 import javax.naming.OperationNotSupportedException;
 
+/**
+ * Utilities class to hold common geometrical operations
+ *
+ * @author Hatem Morgan
+ */
 public class Utilities {
     /**
      * Returns true if the point p lies inside the polygon
@@ -13,10 +18,6 @@ public class Utilities {
      * point lies outside.
      */
     public static boolean polygonPointIntersection(Point point, Polygon polygon) throws OperationNotSupportedException {
-        if (polygon.maxX == Double.MIN_VALUE)
-            for (int i = 0; i < polygon.points.length - 1; ++i)
-                polygon.maxX = Math.max(polygon.maxX, polygon.points[i].x);
-
         /* Create a point for line segment from p to infinite */
         LineSegment ray = new LineSegment(point, new Point(polygon.maxX + 1e3, point.y));
 
@@ -66,7 +67,7 @@ public class Utilities {
                 p2
         };
 
-        /* Iterate over edges for checking intersection of edges without any points intersection */
+        /* Iterate over edges for checking intersection of edges */
         for (LineSegment rectEdge : rectEdges)
             if (polygonLineIntersection(rectEdge, polygon))
                 return true;

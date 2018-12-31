@@ -11,7 +11,7 @@ import java.io.DataOutput;
 import java.io.IOException;
 
 /**
- * A class that holds coordinates of a rectangle.
+ * Implementation of a rectangle.
  *
  * @author Hatem Morgan
  */
