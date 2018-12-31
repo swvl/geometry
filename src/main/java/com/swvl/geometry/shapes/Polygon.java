@@ -26,7 +26,7 @@ public class Polygon extends Shape {
     public double maxY = Double.MIN_VALUE;
     /* Minimum x-coordinate */
     public double minX = Double.MAX_VALUE;
-    /* Maximum Y-coordinate */
+    /* Minimum Y-coordinate */
     public double minY = Double.MAX_VALUE;
 
     public Polygon() {

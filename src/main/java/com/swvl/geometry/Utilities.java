@@ -18,7 +18,7 @@ public class Utilities {
                 polygon.maxX = Math.max(polygon.maxX, polygon.points[i].x);
 
         /* Create a point for line segment from p to infinite */
-        LineSegment infinityLine = new LineSegment(point, new Point(polygon.maxX + 1e3, point.y));
+        LineSegment ray = new LineSegment(point, new Point(polygon.maxX + 1e3, point.y));
 
         /* Pointer to current edge in polygon */
         LineSegment edge = new LineSegment();
@@ -34,7 +34,7 @@ public class Utilities {
              * Check if the infinityLine line segment intersects
              * with the edge line segment
              */
-            if (edge.isIntersected(infinityLine)) {
+            if (edge.isIntersected(ray)) {
 
                 /* check if it lies on segment. If it lies, return true */
                 if (edge.contains(point))
@@ -103,13 +103,12 @@ public class Utilities {
                 return true;
         }
 
-        /* Check for vertex intersection */
-        for (int i = 0; i < polygon.points.length - 1; ++i)
-            if (line.isIntersected(polygon.points[i]))
-                return true;
-
-        /* Check if Line is inside the polygon */
-        return polygon.contains(line);
+        /*
+         * Check if Line is inside the polygon where both of its end points must be
+         * inside the polygon
+         */
+        return polygonPointIntersection(line.p1, polygon)
+                && polygonPointIntersection(line.p2, polygon);
     }
 
 
