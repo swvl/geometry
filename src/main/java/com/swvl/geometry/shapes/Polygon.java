@@ -5,7 +5,6 @@ import com.swvl.geometry.io.TextSerializerHelper;
 import org.apache.hadoop.io.Text;
 
 import javax.naming.OperationNotSupportedException;
-import javax.sound.sampled.Line;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;

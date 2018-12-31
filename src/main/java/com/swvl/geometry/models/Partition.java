@@ -41,19 +41,19 @@ public class Partition extends Rectangle {
     public long maxRecordSize;
 
     public Partition(Rectangle rect, long maxRecordSize) {
-        super(rect);
+        super.set(rect);
         this.maxRecordSize = maxRecordSize;
     }
 
     public Partition(Rectangle rect, long maxRecordSize, long size, int count) {
-        super(rect);
+        super.set(rect);
         this.maxRecordSize = maxRecordSize;
         this.size = size;
         this.recordCount = count;
     }
 
     public Partition(int cellId, Rectangle rect, long size, int count) {
-        super(rect);
+        super.set(rect);
         this.maxRecordSize = maxRecordSize;
         this.size = size;
         this.recordCount = count;
@@ -71,7 +71,7 @@ public class Partition extends Rectangle {
     }
 
     public Partition(Partition other) {
-        super(other); // set rectangle attributes
+        super.set(other); // set rectangle attributes
         this.filename = other.filename;
         this.recordCount = other.recordCount;
         this.size = other.size;

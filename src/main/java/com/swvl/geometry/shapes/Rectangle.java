@@ -19,8 +19,6 @@ public class Rectangle extends Shape implements WritableComparable<Rectangle> {
     public Point minPoint; // point with minimum coordinates
     public Point maxPoint; // point with maximum coordinates
 
-    final static double EPS = 1e-9; // Epsilon error for comparing floating points
-
     public void validate() {
         if (minPoint == null || maxPoint == null)
             throw new IllegalArgumentException("Bottom-left and Upper-right points" +
@@ -35,9 +33,16 @@ public class Rectangle extends Shape implements WritableComparable<Rectangle> {
     public Rectangle(Point minPoint, Point maxPoint) {
         this.minPoint = minPoint;
         this.maxPoint = maxPoint;
+        validate();
     }
 
     public Rectangle(Rectangle rect) {
+        this.minPoint = rect.minPoint.clone();
+        this.maxPoint = rect.maxPoint.clone();
+        validate();
+    }
+
+    public void set(Rectangle rect) {
         this.minPoint = rect.minPoint.clone();
         this.maxPoint = rect.maxPoint.clone();
     }
@@ -246,16 +251,6 @@ public class Rectangle extends Shape implements WritableComparable<Rectangle> {
 
         return true;
     }
-
-    private boolean contiainsPolygon(Polygon polygon) throws OperationNotSupportedException {
-
-        for (int i = 0; i < polygon.points.length; ++i)
-            if (!this.isIntersected(polygon.points[i]))
-                return false;
-
-        return true;
-    }
-
 
     /**
      * Open bounded rectangle is a rectangle which in inclusive at left and bottom edges and exclusive
