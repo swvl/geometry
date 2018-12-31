@@ -170,7 +170,7 @@ public class Polygon extends Shape {
         validate();
 
         Point[] clonedPoints = new Point[points.length];
-        for (int i = 0; i < points.length - 1; ++i)
+        for (int i = 0; i < points.length; ++i)
             clonedPoints[i] = points[i].clone();
 
         return new Polygon(clonedPoints);
