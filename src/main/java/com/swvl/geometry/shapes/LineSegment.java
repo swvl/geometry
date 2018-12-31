@@ -88,8 +88,11 @@ public class LineSegment extends Shape {
     }
 
     @Override
-    public double distanceTo(Point p) {
+    public double distanceTo(Point p) throws OperationNotSupportedException {
         validate();
+
+        if (contains(p)) // point on line segment
+            return 0;
 
         /* transform line p1p to vector*/
         double apx = p.x - p1.x;
@@ -111,7 +114,6 @@ public class LineSegment extends Shape {
          */
         double u = apx * ux + apy * uy;
 
-        /* use pythagoras to calculate perpendicular distance between p1p and p1p2*/
         if (u / vectorMagnitude < 0.0) // closer to a
             return p.distanceTo(p1); // Euclidean distance between p and p1
 
@@ -166,7 +168,7 @@ public class LineSegment extends Shape {
         p.x = (line.b * this.c - this.b * line.c) / (line.a * this.b - this.a * line.b);
 
         /* check vertical line (b=0) to avoid dividing by zero */
-        if (Math.abs(b) < EPS)
+        if (b < EPS)
             p.y = -(line.a * p.x) - line.c; // invoker is a vertical line so calculate y from line
         else
             p.y = -(this.a * p.x) - this.c;

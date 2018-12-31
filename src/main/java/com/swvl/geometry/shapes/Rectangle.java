@@ -130,8 +130,11 @@ public class Rectangle extends Shape implements WritableComparable<Rectangle> {
      * @return
      */
     @Override
-    public double distanceTo(Point p) {
+    public double distanceTo(Point p) throws OperationNotSupportedException {
         validate();
+
+        if (containsPoints(p)) // point inside rectangle
+            return 0;
 
         Point p1 = new Point(this.maxPoint.x, this.minPoint.y); // bottom-right point
         Point p2 = new Point(this.minPoint.x, this.maxPoint.y); // upper-left point

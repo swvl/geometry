@@ -18,7 +18,7 @@ public class Utilities {
      * point lies outside.
      */
     public static boolean polygonPointIntersection(Point point, Polygon polygon) throws OperationNotSupportedException {
-        /* Create a point for line segment from p to infinite */
+        /* Create a line segment from p to infinite */
         LineSegment ray = new LineSegment(point, new Point(polygon.maxX + 1e3, point.y));
 
         /* Pointer to current edge in polygon */
@@ -105,11 +105,11 @@ public class Utilities {
         }
 
         /*
-         * Check if Line is inside the polygon where both of its end points must be
+         * Check if Line is inside the polygon where one of its end points must be
          * inside the polygon
          */
         return polygonPointIntersection(line.p1, polygon)
-                && polygonPointIntersection(line.p2, polygon);
+                || polygonPointIntersection(line.p2, polygon);
     }
 
 
@@ -163,7 +163,7 @@ public class Utilities {
 
         /* No Edges intersection thus check if the line is in the rectangle */
         return rectanglePointIntersection(lineSegment.p1, rect)
-                && rectanglePointIntersection(lineSegment.p2, rect);
+                || rectanglePointIntersection(lineSegment.p2, rect);
     }
 
     /**
@@ -176,7 +176,7 @@ public class Utilities {
      */
     public static boolean lineSegmentPointIntersection(Point point, LineSegment lineSegment) {
         /* Check that point is on line */
-        if (Math.abs(lineSegment.b) == 1) {
+        if (lineSegment.b > Shape.EPS) {
             double y = -(lineSegment.a * point.x) - lineSegment.c;
 
             if (Math.abs(y - point.y) > Shape.EPS) // point is not on the line

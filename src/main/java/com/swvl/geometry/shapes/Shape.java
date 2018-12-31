@@ -40,7 +40,7 @@ public abstract class Shape implements Writable, Cloneable, TextSerializable, Se
      * @param p the point
      * @return The Euclidean distance between this object and the given point
      */
-    public abstract double distanceTo(Point p);
+    public abstract double distanceTo(Point p) throws OperationNotSupportedException;
 
     /**
      * Check for intersection of this shape with the given shape

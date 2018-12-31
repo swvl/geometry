@@ -43,7 +43,7 @@ public class Polygon extends Shape {
      */
     private void validate() {
 
-        if (points.length < 3)
+        if (points.length < 4)
             throw new IllegalArgumentException("Number of point for polygon must " +
                     "by greater than or equal 3");
 
@@ -70,8 +70,11 @@ public class Polygon extends Shape {
     }
 
     @Override
-    public double distanceTo(Point p) {
+    public double distanceTo(Point p) throws OperationNotSupportedException {
         validate();
+
+        if (containsPoints(p)) // point inside polygon
+            return 0;
 
         /* Pointer to current edge in polygon */
         LineSegment edge = new LineSegment();
