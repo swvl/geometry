@@ -188,9 +188,6 @@ public class Rectangle extends Shape implements WritableComparable<Rectangle> {
                     && rect.maxPoint.y + EPS > this.minPoint.y; // this.minPoint.y < rect.maxPoint.y
         }
 
-        /* For a line segment to intersect a rectangle,
-         * at least one of its end points should be inside the rectangle
-         */
         if (shape instanceof LineSegment)
             return Utilities.rectangelLineSegementIntersection((LineSegment) shape, this);
 
