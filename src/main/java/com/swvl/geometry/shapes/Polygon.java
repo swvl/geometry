@@ -200,14 +200,15 @@ public class Polygon extends Shape {
         if (shape instanceof Point)
             return this.isIntersected(shape);
 
-        if (shape instanceof LineSegment)
-            return containsLineSegment((LineSegment) shape);
-
-        if (shape instanceof Rectangle)
-            return containsRectangle((Rectangle) shape);
-
-        if (shape instanceof Polygon)
-            return containsPolygon((Polygon) shape);
+        // TODO contains operation for conacve polygons with other shapes
+//        if (shape instanceof LineSegment)
+//            return containsLineSegment((LineSegment) shape);
+//
+//        if (shape instanceof Rectangle)
+//            return containsRectangle((Rectangle) shape);
+//
+//        if (shape instanceof Polygon)
+//            return containsPolygon((Polygon) shape);
 
         throw new OperationNotSupportedException("contains operation in Polygon does not support " + shape.getClass());
 

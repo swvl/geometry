@@ -111,7 +111,7 @@ public class PolygonTest {
         Assert.assertFalse(poly2.contains(p15));
     }
 
-    @Test
+    @Test(expected = OperationNotSupportedException.class)
     public void testLineIntersectionAndContains() throws OperationNotSupportedException {
         LineSegment l1 = new LineSegment(new Point(4.001211, 5.122414),
                 new Point(20.121, 5.643)); // horizontal line intersect vertical edge
@@ -180,7 +180,7 @@ public class PolygonTest {
     }
 
 
-    @Test
+    @Test(expected = OperationNotSupportedException.class)
     public void testRectangleIntersectionAndContains() throws OperationNotSupportedException {
         Rectangle rect1 = new Rectangle(5, 10, 12, 15); // minimum point inside poly1
         Assert.assertTrue(poly1.isIntersected(rect1));
@@ -229,7 +229,7 @@ public class PolygonTest {
 
     }
 
-    @Test
+    @Test(expected = OperationNotSupportedException.class)
     public void testPolygonIntersectionAndContains() throws OperationNotSupportedException {
         Point[] polyPOints1 = new Point[]{
                 new Point(-1, -1),
