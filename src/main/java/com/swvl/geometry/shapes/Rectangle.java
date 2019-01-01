@@ -36,12 +36,6 @@ public class Rectangle extends Shape implements WritableComparable<Rectangle> {
         validate();
     }
 
-    public Rectangle(Rectangle rect) {
-        this.minPoint = rect.minPoint.clone();
-        this.maxPoint = rect.maxPoint.clone();
-        validate();
-    }
-
     public void set(Rectangle rect) {
         this.minPoint = rect.minPoint.clone();
         this.maxPoint = rect.maxPoint.clone();

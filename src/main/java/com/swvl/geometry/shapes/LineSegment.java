@@ -68,21 +68,11 @@ public class LineSegment extends Shape {
 
         double minX, minY, maxX, maxY;
 
-        if (p1.x - p2.x > -EPS) {
-            maxX = p1.x;
-            minX = p2.x;
-        } else {
-            maxX = p2.x;
-            minX = p1.x;
-        }
+        minX = Math.min(p1.x, p2.x);
+        maxX = p1.x + p2.x - minX;
 
-        if (p1.y - p2.y > -EPS) {
-            maxY = p1.y;
-            minY = p2.y;
-        } else {
-            maxY = p2.y;
-            minY = p1.y;
-        }
+        minY = Math.min(p1.y, p2.y);
+        maxY = p1.y + p2.y - minY;
 
         return new Rectangle(minX, minY, maxX, maxY);
     }

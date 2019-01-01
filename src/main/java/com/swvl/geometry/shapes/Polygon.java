@@ -141,30 +141,6 @@ public class Polygon extends Shape {
         return false;
     }
 
-
-    /**
-     * @param p 1st point
-     * @param q 2nd point
-     * @param r 3rd point
-     * @return true if the 3 points lies on the line
-     */
-    private boolean areCollinear(Point p, Point q, Point r) {
-        /* Calculate vector pq^ */
-        double pqx = q.x - p.y;
-        double pqy = q.y - p.y;
-
-        /* Calculate vector qr^ */
-        double qrx = r.x - q.x;
-        double qry = r.y - q.y;
-
-        /* Cross product between pq^ and qr^ */
-        double val = pqx * qry - pqy * qrx;
-
-        /* if val = 0 then points are collinear */
-        return Math.abs(val) < EPS;
-
-    }
-
     @Override
     public Polygon clone() {
         validate();
