@@ -30,7 +30,7 @@ public class LineSegmentTest {
     }
 
     @Test
-    public void testToDistance() {
+    public void testToDistance() throws OperationNotSupportedException {
         Point p1 = new Point(3, 3);
         Point a1 = new Point(2, 1);
         Point b1 = new Point(4, 1);
@@ -64,7 +64,7 @@ public class LineSegmentTest {
      * @param line represented by two points endPoint e and startPoint s
      * @param p    point to calculate distance from it
      */
-    private boolean checkAccuracyOfPointDistanceUsingTrigonometry(LineSegment line, Point p) {
+    private boolean checkAccuracyOfPointDistanceUsingTrigonometry(LineSegment line, Point p) throws OperationNotSupportedException {
         /* Calculate vector ep */
         double epx = p.x - line.p1.x;
         double epy = p.y - line.p1.y;
