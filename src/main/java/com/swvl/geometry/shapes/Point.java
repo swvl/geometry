@@ -86,15 +86,6 @@ public class Point extends Shape implements WritableComparable<Point> {
         throw new OperationNotSupportedException("Check if point contains a shape is a fatal error");
     }
 
-    @Override
-    public boolean isEdgeIntersection(Shape shape) throws OperationNotSupportedException {
-        if (shape instanceof Rectangle)
-            return shape.isEdgeIntersection(this);
-
-        throw new OperationNotSupportedException("isEdgeIntersection operation in Point is not supported");
-    }
-
-
     /**
      * Returns the minimal bounding rectangle of this point. This method returns
      * the smallest rectangle that contains this point. For consistency with

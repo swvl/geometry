@@ -74,15 +74,6 @@ public abstract class Shape implements Writable, Cloneable, TextSerializable, Se
      */
     public abstract boolean contains(Shape shape) throws OperationNotSupportedException;
 
-
-    /**
-     * Check for intersection between any of edges of this shape with any of edges of given shape
-     *
-     * @param shape The other shape to test for edge intersection with this shape
-     * @return <code>true</code> if this shape has edge(s) that intersects with edge(s) of given shape; <code>false</code> otherwise.
-     */
-    public abstract boolean isEdgeIntersection(Shape shape) throws OperationNotSupportedException;
-
     @Override
     public abstract void write(DataOutput dataOutput) throws IOException;
 

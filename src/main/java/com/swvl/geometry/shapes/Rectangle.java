@@ -178,8 +178,8 @@ public class Rectangle extends Shape implements WritableComparable<Rectangle> {
             /* part of one rectangle is inside the other one */
             return this.maxPoint.x + EPS > rect.minPoint.x // this.maxPoint.x >= rect.minPoint.x
                     && this.maxPoint.y + EPS > rect.minPoint.y // this.maxPoint.y >= rect.minPoint.y
-                    && rect.maxPoint.x + EPS > this.minPoint.x // this.minPoint.x < rect.maxPoint.x
-                    && rect.maxPoint.y + EPS > this.minPoint.y; // this.minPoint.y < rect.maxPoint.y
+                    && rect.maxPoint.x + EPS > this.minPoint.x // this.minPoint.x <= rect.maxPoint.x
+                    && rect.maxPoint.y + EPS > this.minPoint.y; // this.minPoint.y <= rect.maxPoint.y
         }
 
         if (shape instanceof LineSegment)
@@ -192,7 +192,12 @@ public class Rectangle extends Shape implements WritableComparable<Rectangle> {
     }
 
 
-    @Override
+    /**
+     * Check for intersection between any of edges of this shape with any of edges of given shape
+     *
+     * @param shape The other shape to test for edge intersection with this shape
+     * @return <code>true</code> if this shape has edge(s) that intersects with edge(s) of given shape; <code>false</code> otherwise.
+     */
     public boolean isEdgeIntersection(Shape shape) throws OperationNotSupportedException {
         validate();
 

@@ -200,11 +200,6 @@ public class LineSegment extends Shape {
     }
 
     @Override
-    public boolean isEdgeIntersection(Shape shape) throws OperationNotSupportedException {
-        throw new OperationNotSupportedException("isEdgeIntersection is not supported for line");
-    }
-
-    @Override
     public void write(DataOutput dataOutput) throws IOException {
         validate();
 
@@ -254,5 +249,42 @@ public class LineSegment extends Shape {
 
         return this.p1.equals(line.p1)
                 && this.p2.equals(line.p2);
+    }
+
+
+    public Point getIntersectionPointIfExist(LineSegment line) throws OperationNotSupportedException {
+        /*
+         * Check for general that one of the line segments has an intersection
+         * between any of its end points with the other line segment
+         */
+        if (this.isIntersected(line.p1))
+            return line.p1;
+
+        if (this.isIntersected(line.p2))
+            return line.p2;
+
+        if (line.isIntersected(this.p1))
+            return this.p1;
+
+        if (line.isIntersected(this.p2))
+            return this.p2;
+
+
+        /* check if lines are parallel*/
+        if (Math.abs(this.a - line.a) < EPS && Math.abs(this.b - line.b) < EPS)
+            return null;
+
+        /* solve simultaneous equation of two 2 line equation with two unknowns (x,y) */
+        Point p = new Point();
+        p.x = (line.b * this.c - this.b * line.c) / (line.a * this.b - this.a * line.b);
+
+        /* check vertical line (b=0) to avoid dividing by zero */
+        if (b < EPS)
+            p.y = -(line.a * p.x) - line.c; // invoker is a vertical line so calculate y from line
+        else
+            p.y = -(this.a * p.x) - this.c;
+
+        /* Check that intersection point is on both lines */
+        return (this.isIntersected(p) && line.isIntersected(p)) ? p : null;
     }
 }

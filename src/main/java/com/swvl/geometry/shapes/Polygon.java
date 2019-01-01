@@ -307,11 +307,6 @@ public class Polygon extends Shape {
     }
 
     @Override
-    public boolean isEdgeIntersection(Shape shape) throws OperationNotSupportedException {
-        throw new OperationNotSupportedException("isEdgeIntersection is not supported for Polygon");
-    }
-
-    @Override
     public void write(DataOutput dataOutput) throws IOException {
         validate();
 
