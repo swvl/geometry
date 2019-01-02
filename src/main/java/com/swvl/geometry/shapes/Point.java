@@ -137,6 +137,7 @@ public class Point extends Shape implements WritableComparable<Point> {
 
     @Override
     public int compareTo(Point pt2) {
+        /* Sort on x then y for resolving ties*/
         if (this.x - pt2.x < -EPS)
             return -1;
 

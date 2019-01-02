@@ -3,11 +3,13 @@ package com.swvl.geometry.shapes;
 import com.swvl.geometry.Utilities;
 import com.swvl.geometry.io.TextSerializerHelper;
 import org.apache.hadoop.io.Text;
+import org.omg.PortableServer.POA;
 
 import javax.naming.OperationNotSupportedException;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
+import java.util.*;
 
 /**
  * Implementation of a polygon.
@@ -177,8 +179,8 @@ public class Polygon extends Shape {
             return this.isIntersected(shape);
 
         // TODO contains operation for conacve polygons with other shapes
-//        if (shape instanceof LineSegment)
-//            return containsLineSegment((LineSegment) shape);
+        if (shape instanceof LineSegment)
+            return containsLineSegment((LineSegment) shape);
 //
 //        if (shape instanceof Rectangle)
 //            return containsRectangle((Rectangle) shape);
@@ -250,34 +252,40 @@ public class Polygon extends Shape {
         if (!containsPoints(lineSegment.p1, lineSegment.p2))
             return false;
 
-        /*
-         * Both of the end points are inside the polygon.
-         *
-         * if the line is on one of the polygon's edges then return true
-         */
+        TreeSet<Point> treeSet = new TreeSet<Point>();
+
+        /* Calculate intersection points between line segment and polygon's edges */
         LineSegment edge = new LineSegment();
         for (int i = 0; i < points.length - 1; ++i) {
             edge.set(points[i], points[i + 1]);
-            if (edge.contains(lineSegment)) // line segment on the edge
-                return true;
+            Point p = edge.getIntersectionPointIfExist(lineSegment);
+            if (p != null)
+                treeSet.add(p);
         }
+
+        if (treeSet.isEmpty()) // no edge intersection and two end points are inside polygon
+            return true;
+
+        ArrayList<Point> midPoints = new ArrayList<Point>();
 
         /*
-         * Both of the end points are inside the polygon and line segment is not on any
-         * of the polygon's edges.
-         *
-         * Check if the line segment goes out and then in the polygon (concave case)
-         * by checking for any edge intersection with the line segment.
+         * Iterate over sorted points to get the midpoints between each consecutive
+         * points. Then, check that all midpoints are inside polygon
          */
-
-        edge = new LineSegment();
-        for (int i = 0; i < points.length - 1; ++i) {
-            edge.set(points[i], points[i + 1]);
-            if (lineSegmentWithoutEndPointsIntersection(edge, lineSegment)) // edge intersects the line segment
-                return false;
+        Iterator<Point> iter = treeSet.iterator();
+        Point p1, p2 = iter.next();
+        while (iter.hasNext()) {
+            p1 = p2;
+            p2 = iter.next();
+            edge.set(p1, p2);
+            midPoints.add(edge.getCenterPoint());
         }
 
-        /* Both end points are inside polygon and the line is fully inside the polygon */
+        /* Check that all center points are inside the polygon */
+        for (Point point : midPoints)
+            if (!containsPoints(point))
+                return false;
+
         return true;
     }
 

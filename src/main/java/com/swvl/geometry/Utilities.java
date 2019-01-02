@@ -18,8 +18,10 @@ public class Utilities {
      * point lies outside.
      */
     public static boolean polygonPointIntersection(Point point, Polygon polygon) throws OperationNotSupportedException {
+        final double Y_EPS = 1e-7;
+
         /* Create a line segment from p to infinite */
-        LineSegment ray = new LineSegment(point, new Point(polygon.maxX + 1e3, point.y));
+        LineSegment ray = new LineSegment(point, new Point(polygon.maxX + 1e2, point.y));
 
         /* Pointer to current edge in polygon */
         LineSegment edge = new LineSegment();
@@ -27,22 +29,29 @@ public class Utilities {
         /* Count intersections of the above line with sides of polygon */
         int count = 0;
 
-
+        double originalY = point.y;
         for (int i = 0; i < polygon.points.length - 1; ++i) {
+
             edge.set(polygon.points[i], polygon.points[i + 1]);
+
+            /* check if it lies on segment. If it lies, return true */
+            if (edge.contains(point))
+                return true;
+
+            /* Increment y-coordinate of point if it lies on the same y-level of any vertex */
+            if (Math.abs(point.y - polygon.points[i].y) < Shape.EPS
+                    || Math.abs(point.y - polygon.points[i + 1].y) < Shape.EPS)
+                point.y += Y_EPS;
+
 
             /*
              * Check if the infinityLine line segment intersects
              * with the edge line segment
              */
-            if (edge.isIntersected(ray)) {
-
-                /* check if it lies on segment. If it lies, return true */
-                if (edge.contains(point))
-                    return true;
-
+            if (edge.isIntersected(ray))
                 count++;
-            }
+
+            point.y = originalY;//return y-coordinate to its original value for next iterations
         }
 
         return count % 2 == 1;
@@ -219,6 +228,4 @@ public class Utilities {
         return Math.abs(val) < Shape.EPS;
 
     }
-
-
 }
