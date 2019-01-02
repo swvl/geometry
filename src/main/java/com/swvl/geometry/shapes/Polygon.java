@@ -349,18 +349,37 @@ public class Polygon extends Shape {
         validate();
 
         TextSerializerHelper.serializeInt(points.length, text, ',');
-        for (Point point : points) point.toText(text);
+
+        for (int i = 0; i < points.length - 1; ++i) {
+            TextSerializerHelper.serializeDouble(points[i].x, text, ',');
+            TextSerializerHelper.serializeDouble(points[i].y, text, ',');
+        }
+
+        /* Last point */
+        TextSerializerHelper.serializeDouble(points[points.length - 1].x, text, ',');
+        TextSerializerHelper.serializeDouble(points[points.length - 1].y, text, '\0');
+
         return text;
     }
 
     @Override
     public void fromText(Text text) {
         int size = TextSerializerHelper.consumeInt(text, ',');
+        double x, y;
         points = new Point[size];
-        for (int i = 0; i < points.length; ++i) {
-            points[i] = new Point();
-            points[i].fromText(text);
+
+        for (int i = 0; i < points.length - 1; ++i) {
+            x = TextSerializerHelper.consumeDouble(text, ',');
+            y = TextSerializerHelper.consumeDouble(text, ',');
+            points[i] = new Point(x, y);
         }
+
+        /* Last point*/
+        x = TextSerializerHelper.consumeDouble(text, ',');
+        y = TextSerializerHelper.consumeDouble(text, '\0');
+        points[size - 1] = new Point(x, y);
+
+        validate();
     }
 
 
@@ -381,6 +400,4 @@ public class Polygon extends Shape {
 
         return true;
     }
-
-
 }

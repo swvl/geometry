@@ -1,6 +1,7 @@
 package com.swvl.geometry.shapes;
 
 import com.swvl.geometry.Utilities;
+import com.swvl.geometry.io.TextSerializerHelper;
 import org.apache.hadoop.io.Text;
 
 import javax.naming.OperationNotSupportedException;
@@ -211,18 +212,23 @@ public class LineSegment extends Shape {
     public Text toText(Text text) {
         validate();
 
-        p1.toText(text);
-        p2.toText(text);
+        TextSerializerHelper.serializeDouble(p1.x, text, ',');
+        TextSerializerHelper.serializeDouble(p1.y, text, ',');
+        TextSerializerHelper.serializeDouble(p2.x, text, ',');
+        TextSerializerHelper.serializeDouble(p2.y, text, '\0');
+
         return text;
     }
 
     @Override
     public void fromText(Text text) {
-        p1 = new Point();
-        p1.fromText(text);
+        double x = TextSerializerHelper.consumeDouble(text, ',');
+        double y = TextSerializerHelper.consumeDouble(text, ',');
+        p1 = new Point(x, y);
 
-        p2 = new Point();
-        p2.fromText(text);
+        x = TextSerializerHelper.consumeDouble(text, ',');
+        y = TextSerializerHelper.consumeDouble(text, '\0');
+        p2 = new Point(x, y);
 
         validate();
     }
