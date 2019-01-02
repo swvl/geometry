@@ -12,10 +12,10 @@ public class PolygonTest {
     static {
         Point[] p1Points = new Point[]{
                 new Point(0, 0),
-                new Point(0, 10),
-                new Point(5, 15),
-                new Point(10, 10),
                 new Point(10, 0),
+                new Point(10, 10),
+                new Point(5, 15),
+                new Point(0, 10),
                 new Point(0, 0)
         };
 
@@ -243,10 +243,10 @@ public class PolygonTest {
     public void testPolygonIntersectionAndContains() throws OperationNotSupportedException {
         Point[] polyPOints1 = new Point[]{
                 new Point(-1, -1),
-                new Point(-1, 10),
-                new Point(2, 13),
-                new Point(5, 10),
                 new Point(5, -2),
+                new Point(5, 10),
+                new Point(2, 13),
+                new Point(-1, 10),
                 new Point(-1, -1)
         };
         Polygon polygon1 = new Polygon(polyPOints1); // one point inside poly1

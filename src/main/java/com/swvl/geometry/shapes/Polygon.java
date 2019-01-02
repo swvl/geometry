@@ -73,7 +73,7 @@ public class Polygon extends Shape {
         double area = 0.0;
         for (int i = 0; i < points.length - 1; ++i)
             area += points[i].x * points[i + 1].y - points[i].y * points[i + 1].x;
-        return Math.abs(area) / 2.0;
+        return area / 2.0;
     }
 
     @Override

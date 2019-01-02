@@ -20,10 +20,10 @@ public class Vector {
 
     public Vector scale(double s) {
         return new Vector(x * s, y * s);
-    }              //s is a non-negative value
+    }
 
     public double dot(Vector v) {
-        return (x * v.x + y * v.y);
+        return x * v.x + y * v.y;
     }
 
     public double cross(Vector v) {
@@ -35,11 +35,11 @@ public class Vector {
     }
 
     public Vector unitVector() {
-        double magnitude = this.magnitude();
+        double magnitude = magnitude();
         return new Vector(this.x / magnitude, this.y / magnitude);
     }
 
-    public double norm_sq() {
+    public double norm2() {
         return x * x + y * y;
     }
 }

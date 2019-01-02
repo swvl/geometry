@@ -525,10 +525,10 @@ public class RectangleTest {
     public void testContainsPolygon() throws OperationNotSupportedException {
         Point[] p1Points = new Point[]{
                 new Point(0, 0),
-                new Point(0, 10),
-                new Point(5, 15),
-                new Point(10, 10),
                 new Point(10, 0),
+                new Point(10, 10),
+                new Point(5, 15),
+                new Point(0, 10),
                 new Point(0, 0)
         };
 

@@ -217,4 +217,8 @@ public class Point extends Shape implements WritableComparable<Point> {
         // this.x = point.x && this.y < point.y
         return xDiff <= EPS && yDiff <= -EPS;
     }
+
+    public Point traslate(Vector vector) {
+        return new Point(this.x += vector.x, this.y += vector.y);
+    }
 }

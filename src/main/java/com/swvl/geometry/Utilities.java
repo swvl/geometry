@@ -210,13 +210,13 @@ public class Utilities {
      */
     static double angle(Point a, Point o, Point b) {
         Vector oa = new Vector(o, a), ob = new Vector(o, b);
-        return Math.acos(oa.dot(ob) / Math.sqrt(oa.norm_sq() * ob.norm_sq()));
+        return Math.acos(oa.dot(ob) / Math.sqrt(oa.norm2() * ob.norm2()));
     }
 
     /**
      * returns true if point r is on the left side of line pq
      */
     static boolean ccw(Point p, Point q, Point r) {
-        return new Vector(p, q).cross(new Vector(p, r)) > 0;
+        return new Vector(p, q).cross(new Vector(p, r)) > Shape.EPS;
     }
 }
