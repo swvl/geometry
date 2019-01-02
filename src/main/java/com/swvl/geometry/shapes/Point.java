@@ -1,5 +1,6 @@
 package com.swvl.geometry.shapes;
 
+import com.swvl.geometry.Utilities;
 import com.swvl.geometry.io.TextSerializerHelper;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.io.WritableComparable;
@@ -10,18 +11,16 @@ import java.io.DataOutput;
 import java.io.IOException;
 
 /**
- * Geometrical point represented by x & y coordinates.
+ * Implementation of a point represented by x & y coordinates.
  *
  * @author Hatem Morgan
  */
 public class Point extends Shape implements WritableComparable<Point> {
-    public final static double EPS = 1e-6; // Epsilon error for comparing floating points
-
     public double x;
     public double y;
 
     public Point() {
-        this(-1, -1);
+        this(Double.MIN_VALUE, Double.MIN_VALUE);
     }
 
     public Point(double x, double y) {
@@ -84,17 +83,8 @@ public class Point extends Shape implements WritableComparable<Point> {
 
     @Override
     public boolean contains(Shape shape) throws OperationNotSupportedException {
-        throw new OperationNotSupportedException("Check if point contains a rectangle is a fetal error");
+        throw new OperationNotSupportedException("Check if point contains a shape is a fatal error");
     }
-
-    @Override
-    public boolean isEdgeIntersection(Shape shape) throws OperationNotSupportedException {
-        if (shape instanceof Rectangle)
-            return shape.isEdgeIntersection(this);
-
-        throw new OperationNotSupportedException("isEdgeIntersection operation in Point is not supported");
-    }
-
 
     /**
      * Returns the minimal bounding rectangle of this point. This method returns
@@ -109,21 +99,22 @@ public class Point extends Shape implements WritableComparable<Point> {
         return new Rectangle(x, y, x, y);
     }
 
-
-    public Shape getIntersection(Shape s) throws OperationNotSupportedException {
-        return getMBR().getIntersection(s);
-    }
-
     @Override
-    public boolean isIntersected(Shape s) throws OperationNotSupportedException {
-        if (s instanceof Point)
-            return this.equals(s);
+    public boolean isIntersected(Shape shape) throws OperationNotSupportedException {
+        if (shape instanceof Point)
+            return this.equals(shape);
 
-        if (s instanceof Rectangle)
-            s.isIntersected(this);
+        if (shape instanceof Rectangle)
+            return Utilities.rectanglePointIntersection(this, (Rectangle) shape);
 
+        if (shape instanceof LineSegment)
+            return Utilities.lineSegmentPointIntersection(this, (LineSegment) shape);
 
-        throw new OperationNotSupportedException("isIntersected operation in Point is not supported for " + s.getClass());
+        if (shape instanceof Polygon)
+            return Utilities.polygonPointIntersection(this, (Polygon) shape);
+
+        throw new OperationNotSupportedException("isIntersected operation in Point " +
+                "is not supported for " + shape.getClass());
     }
 
     @Override
@@ -146,6 +137,7 @@ public class Point extends Shape implements WritableComparable<Point> {
 
     @Override
     public int compareTo(Point pt2) {
+        /* Sort on x then y for resolving ties*/
         if (this.x - pt2.x < -EPS)
             return -1;
 
@@ -184,10 +176,8 @@ public class Point extends Shape implements WritableComparable<Point> {
         if (xDiff >= -EPS && yDiff >= EPS) // this.x = point.x && this.y > point.y
             return true;
 
-        if (xDiff >= -EPS && yDiff >= -EPS) // this.x = point.x && this.y = point.y
-            return true;
-
-        return false;
+        // this.x = point.x && this.y = point.y
+        return xDiff >= -EPS && yDiff >= -EPS;
     }
 
 
@@ -201,10 +191,8 @@ public class Point extends Shape implements WritableComparable<Point> {
         if (xDiff <= EPS && yDiff <= -EPS) // this.x = point.x && this.y < point.y
             return true;
 
-        if (xDiff <= EPS && yDiff <= EPS) // this.x = point.x && this.y = point.y
-            return true;
-
-        return false;
+        // this.x = point.x && this.y = point.y
+        return xDiff <= EPS && yDiff <= EPS;
     }
 
     public boolean isGT(Point point) {
@@ -214,10 +202,8 @@ public class Point extends Shape implements WritableComparable<Point> {
         if (xDiff >= EPS) // this.x > point.x
             return true;
 
-        if (xDiff >= -EPS && yDiff >= EPS) // this.x = point.x && this.y > point.y
-            return true;
-
-        return false;
+        // this.x = point.x && this.y > point.y
+        return xDiff >= -EPS && yDiff >= EPS;
     }
 
 
@@ -228,9 +214,11 @@ public class Point extends Shape implements WritableComparable<Point> {
         if (xDiff <= -EPS) // this.x < point.x
             return true;
 
-        if (xDiff <= EPS && yDiff <= -EPS) // this.x = point.x && this.y < point.y
-            return true;
+        // this.x = point.x && this.y < point.y
+        return xDiff <= EPS && yDiff <= -EPS;
+    }
 
-        return false;
+    public Point translate(Vector vector) {
+        return new Point(this.x + vector.x, this.y + vector.y);
     }
 }

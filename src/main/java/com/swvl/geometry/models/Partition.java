@@ -71,11 +71,11 @@ public class Partition extends Rectangle {
     }
 
     public Partition(Partition other) {
+        super.set(other); // set rectangle attributes
         this.filename = other.filename;
         this.recordCount = other.recordCount;
         this.size = other.size;
         this.cellId = other.cellId;
-        super.set(other); // set rectangle attributes
     }
 
     public Partition(double x1, double y1, double x2, double y2) {
@@ -158,11 +158,6 @@ public class Partition extends Rectangle {
         super.expand(shape);
         this.size += size; // accumulate size
         this.recordCount++;
-    }
-
-    @Override
-    public String toWKT() {
-        return super.toWKT() + "\t" + recordCount + "\t" + size + "\t" + filename;
     }
 
     @Override
