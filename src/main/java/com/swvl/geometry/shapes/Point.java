@@ -176,10 +176,8 @@ public class Point extends Shape implements WritableComparable<Point> {
         if (xDiff >= -EPS && yDiff >= EPS) // this.x = point.x && this.y > point.y
             return true;
 
-        if (xDiff >= -EPS && yDiff >= -EPS) // this.x = point.x && this.y = point.y
-            return true;
-
-        return false;
+        // this.x = point.x && this.y = point.y
+        return xDiff >= -EPS && yDiff >= -EPS;
     }
 
 
@@ -193,10 +191,8 @@ public class Point extends Shape implements WritableComparable<Point> {
         if (xDiff <= EPS && yDiff <= -EPS) // this.x = point.x && this.y < point.y
             return true;
 
-        if (xDiff <= EPS && yDiff <= EPS) // this.x = point.x && this.y = point.y
-            return true;
-
-        return false;
+        // this.x = point.x && this.y = point.y
+        return xDiff <= EPS && yDiff <= EPS;
     }
 
     public boolean isGT(Point point) {
@@ -206,10 +202,8 @@ public class Point extends Shape implements WritableComparable<Point> {
         if (xDiff >= EPS) // this.x > point.x
             return true;
 
-        if (xDiff >= -EPS && yDiff >= EPS) // this.x = point.x && this.y > point.y
-            return true;
-
-        return false;
+        // this.x = point.x && this.y > point.y
+        return xDiff >= -EPS && yDiff >= EPS;
     }
 
 
@@ -220,9 +214,7 @@ public class Point extends Shape implements WritableComparable<Point> {
         if (xDiff <= -EPS) // this.x < point.x
             return true;
 
-        if (xDiff <= EPS && yDiff <= -EPS) // this.x = point.x && this.y < point.y
-            return true;
-
-        return false;
+        // this.x = point.x && this.y < point.y
+        return xDiff <= EPS && yDiff <= -EPS;
     }
 }

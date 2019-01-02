@@ -1,6 +1,7 @@
 package com.swvl.geometry;
 
 import com.swvl.geometry.shapes.*;
+import sun.security.provider.SHA;
 
 import javax.naming.OperationNotSupportedException;
 
@@ -11,50 +12,30 @@ import javax.naming.OperationNotSupportedException;
  */
 public class Utilities {
     /**
-     * Returns true if the point p lies inside the polygon
+     * Winding number algorithm which returns true if the point p lies inside the polygon
      * <p>
      * A point is inside the polygon if either count of intersections is odd or
      * point lies on an edge of polygon.  If none of the conditions is true, then
      * point lies outside.
      */
     public static boolean polygonPointIntersection(Point point, Polygon polygon) throws OperationNotSupportedException {
-        final double Y_EPS = 1e-7;
-
-        /* Create a line segment from p to infinite */
-        LineSegment ray = new LineSegment(point, new Point(polygon.maxX + 1e2, point.y));
-
-        /* Pointer to current edge in polygon */
+        double sum = 0.0;
         LineSegment edge = new LineSegment();
-
-        /* Count intersections of the above line with sides of polygon */
-        int count = 0;
-
-        double originalY = point.y;
         for (int i = 0; i < polygon.points.length - 1; ++i) {
-
             edge.set(polygon.points[i], polygon.points[i + 1]);
 
-            /* check if it lies on segment. If it lies, return true */
             if (edge.contains(point))
                 return true;
 
-            /* Increment y-coordinate of point if it lies on the same y-level of any vertex */
-            if (Math.abs(point.y - polygon.points[i].y) < Shape.EPS
-                    || Math.abs(point.y - polygon.points[i + 1].y) < Shape.EPS)
-                point.y += Y_EPS;
+            double angle = angle(edge.p1, point, edge.p2);
 
-
-            /*
-             * Check if the infinityLine line segment intersects
-             * with the edge line segment
-             */
-            if (edge.isIntersected(ray))
-                count++;
-
-            point.y = originalY;//return y-coordinate to its original value for next iterations
+            if (ccw(point, edge.p1, edge.p2))
+                sum += angle;  // left turn/CCW
+            else
+                sum -= angle; // right turn/CW
         }
 
-        return count % 2 == 1;
+        return Math.abs(Math.abs(sum) - 2 * Math.PI) < Shape.EPS;
     }
 
     public static boolean polygonRectangleIntersection(Rectangle rect, Polygon polygon) throws OperationNotSupportedException {
@@ -221,6 +202,21 @@ public class Utilities {
 
         /* if val = 0 then points are collinear */
         return Math.abs(val) < Shape.EPS;
+    }
 
+
+    /**
+     * Calculate angle AOB
+     */
+    static double angle(Point a, Point o, Point b) {
+        Vector oa = new Vector(o, a), ob = new Vector(o, b);
+        return Math.acos(oa.dot(ob) / Math.sqrt(oa.norm_sq() * ob.norm_sq()));
+    }
+
+    /**
+     * returns true if point r is on the left side of line pq
+     */
+    static boolean ccw(Point p, Point q, Point r) {
+        return new Vector(p, q).cross(new Vector(p, r)) > 0;
     }
 }

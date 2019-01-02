@@ -3,7 +3,6 @@ package com.swvl.geometry.shapes;
 import com.swvl.geometry.Utilities;
 import com.swvl.geometry.io.TextSerializerHelper;
 import org.apache.hadoop.io.Text;
-import org.omg.PortableServer.POA;
 
 import javax.naming.OperationNotSupportedException;
 import java.io.DataInput;
@@ -18,7 +17,7 @@ import java.util.*;
  */
 public class Polygon extends Shape {
     /*
-     * points, entered any order either clockwise or anti-clockwise.
+     * points, entered in anti-clockwise order.
      * Array is 0-based indexing with the first vertex being equal to the last vertex
      */
     public Point[] points = new Point[]{};
@@ -53,6 +52,9 @@ public class Polygon extends Shape {
         if (!points[points.length - 1].equals(points[0]))
             throw new IllegalArgumentException("First vertex and last vertex must be same");
 
+        /* check if area is negative which indicates that the points entered in CW order*/
+        if (area() < EPS)
+            throw new IllegalArgumentException("Points must be order in counter-clockwise");
 
         for (Point point : points) {
             double x = point.x;
@@ -62,6 +64,16 @@ public class Polygon extends Shape {
             minY = Math.min(minY, y);
             maxY = Math.max(maxY, y);
         }
+    }
+
+    /**
+     * returns the area, which is half the determinant
+     */
+    private double area() {
+        double area = 0.0;
+        for (int i = 0; i < points.length - 1; ++i)
+            area += points[i].x * points[i + 1].y - points[i].y * points[i + 1].x;
+        return Math.abs(area) / 2.0;
     }
 
     @Override

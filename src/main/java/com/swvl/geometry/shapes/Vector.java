@@ -38,4 +38,8 @@ public class Vector {
         double magnitude = this.magnitude();
         return new Vector(this.x / magnitude, this.y / magnitude);
     }
+
+    public double norm_sq() {
+        return x * x + y * y;
+    }
 }

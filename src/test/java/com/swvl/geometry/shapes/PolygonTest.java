@@ -369,4 +369,9 @@ public class PolygonTest {
         Assert.assertTrue(poly2.isIntersected(polygon10));
         Assert.assertFalse(poly2.contains(polygon10));
     }
+
+    public static void main(String[] args) throws OperationNotSupportedException {
+        Point p = new Point(5, 10);
+        poly1.contains(p);
+    }
 }
