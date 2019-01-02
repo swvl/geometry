@@ -84,39 +84,34 @@ public class LineSegment extends Shape {
         if (contains(p)) // point on line segment
             return 0;
 
-        /* transform line p1p to vector*/
-        double apx = p.x - p1.x;
-        double apy = p.y - p1.y;
-
-        /* transform line p1p2 to vector*/
-        double abx = p2.x - p1.x;
-        double aby = p2.y - p1.y;
+        Vector p1p = new Vector(p1, p); // transform line p1p to vector
+        Vector p1p2 = new Vector(p1, p2); // transform line p1p2 to vector
 
         /* Calculate unit vector p1p2^ of vector p1p2 */
-        double vectorMagnitude = Math.sqrt(abx * abx + aby * aby);
-        double ux = abx / vectorMagnitude;
-        double uy = aby / vectorMagnitude;
+        Vector p1p2UnitVector = p1p2.unitVector();
 
         /*
          * Get the scalar projection b of vector p1p on p1p1.
          * s = ||p1p|| * cosθ =  dotProduct(p1p, p1p2^) / ||p1p2^||
          * We use the unit vector of p1p2 because magnitude of unit vector = 1
          */
-        double u = apx * ux + apy * uy;
+        double res = p1p.dot(p1p2UnitVector);
+        double vectorMagnitude = p1p2.magnitude();
 
-        if (u / vectorMagnitude < 0.0) // closer to a
+        if (res / vectorMagnitude < 0.0) // closer to a
             return p.distanceTo(p1); // Euclidean distance between p and p1
 
 
-        if (u / vectorMagnitude > 1.0)  // closer to b
+        if (res / vectorMagnitude > 1.0)  // closer to b
             return p.distanceTo(p2); // Euclidean distance between p and p2
 
         /*
          * Translate point a by a scaled magnitude u of vector p1p2
-         * (multiplying p1p2^ by u to get scaled vector in p1p2 direction)
+         * (multiplying p1p2^ by res to get scaled vector in p1p2 direction)
          */
-        double cx = p1.x + (ux * u);
-        double cy = p1.y + (uy * u);
+        p1p2UnitVector.scale(res);
+        double cx = p1.x + p1p2UnitVector.x;
+        double cy = p1.y + p1p2UnitVector.y;
         return p.distanceTo(new Point(cx, cy));
     }
 

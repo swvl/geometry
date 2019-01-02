@@ -65,12 +65,10 @@ public class LineSegmentTest {
      * @param p    point to calculate distance from it
      */
     private boolean checkAccuracyOfPointDistanceUsingTrigonometry(LineSegment line, Point p) throws OperationNotSupportedException {
-        /* Calculate vector ep */
-        double epx = p.x - line.p1.x;
-        double epy = p.y - line.p1.y;
+        Vector ep = new Vector(line.p1, p); // Calculate vector ep
 
         /* Magnitude of ep vector */
-        double hypotenuse = Math.sqrt(epx * epx + epy * epy);
+        double hypotenuse = ep.magnitude();
         /* Calculate vertical distance between point and line */
         double oppsite = line.distanceTo(p);
         /* Calculate adjacent side using Pythagoras theorem */

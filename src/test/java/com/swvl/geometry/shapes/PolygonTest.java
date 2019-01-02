@@ -116,34 +116,34 @@ public class PolygonTest {
 
     @Test
     public void testLineIntersectionAndContains() throws OperationNotSupportedException {
-//        LineSegment l1 = new LineSegment(new Point(4.001211, 5.122414),
-//                new Point(20.121, 5.643)); // horizontal line intersect vertical edge
-//        Assert.assertTrue(poly1.isIntersected(l1));
-//        Assert.assertFalse(poly1.contains(l1));
-//
-//        LineSegment l2 = new LineSegment(new Point(8.01221, 10),
-//                new Point(11.0121, 14.1121)); // incline line intersect edge
-//        Assert.assertTrue(poly1.isIntersected(l2));
-//        Assert.assertFalse(poly1.contains(l2));
-//
-//        LineSegment l3 = new LineSegment(new Point(4.001211, 15),
-//                new Point(20.121, 15)); // horizontal line intersection with vertex
-//        Assert.assertTrue(poly1.isIntersected(l3));
-//        Assert.assertFalse(poly1.contains(l3));
-//
-//        LineSegment l4 = new LineSegment(new Point(4, -10),
-//                new Point(4, 20)); // vertical line with two edge intersection
-//        Assert.assertTrue(poly1.isIntersected(l4));
-//        Assert.assertFalse(poly1.contains(l4));
-//
-//        LineSegment l5 = new LineSegment(new Point(0, -1),
-//                new Point(4, -1));
-//        Assert.assertFalse(poly1.isIntersected(l5));
-//        Assert.assertFalse(poly1.contains(l5));
+        LineSegment l1 = new LineSegment(new Point(4.001211, 5.122414),
+                new Point(20.121, 5.643)); // horizontal line intersect vertical edge
+        Assert.assertTrue(poly1.isIntersected(l1));
+        Assert.assertFalse(poly1.contains(l1));
+
+        LineSegment l2 = new LineSegment(new Point(8.01221, 10),
+                new Point(11.0121, 14.1121)); // incline line intersect edge
+        Assert.assertTrue(poly1.isIntersected(l2));
+        Assert.assertFalse(poly1.contains(l2));
+
+        LineSegment l3 = new LineSegment(new Point(4.001211, 15),
+                new Point(20.121, 15)); // horizontal line intersection with vertex
+        Assert.assertTrue(poly1.isIntersected(l3));
+        Assert.assertFalse(poly1.contains(l3));
+
+        LineSegment l4 = new LineSegment(new Point(4, -10),
+                new Point(4, 20)); // vertical line with two edge intersection
+        Assert.assertTrue(poly1.isIntersected(l4));
+        Assert.assertFalse(poly1.contains(l4));
+
+        LineSegment l5 = new LineSegment(new Point(0, -1),
+                new Point(4, -1));
+        Assert.assertFalse(poly1.isIntersected(l5));
+        Assert.assertFalse(poly1.contains(l5));
 
         LineSegment l6 = new LineSegment(new Point(10, 10),
                 new Point(5, 15));  // edge = line
-//        Assert.assertTrue(poly1.isIntersected(l6));
+        Assert.assertTrue(poly1.isIntersected(l6));
         Assert.assertTrue(poly1.contains(l6));
 
         LineSegment l7 = new LineSegment(new Point(10, 10),

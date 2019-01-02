@@ -213,16 +213,11 @@ public class Utilities {
      * @return true if the 3 points lies on the line
      */
     public static boolean areCollinear(Point p, Point q, Point r) {
-        /* Calculate vector pq^ */
-        double pqx = q.x - p.y;
-        double pqy = q.y - p.y;
-
-        /* Calculate vector qr^ */
-        double qrx = r.x - q.x;
-        double qry = r.y - q.y;
+        Vector pq = new Vector(p, q); // Calculate vector pq^
+        Vector qr = new Vector(q, r); // Calculate vector qr^
 
         /* Cross product between pq^ and qr^ */
-        double val = pqx * qry - pqy * qrx;
+        double val = pq.cross(qr);
 
         /* if val = 0 then points are collinear */
         return Math.abs(val) < Shape.EPS;

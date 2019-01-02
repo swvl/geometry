@@ -1,7 +1,7 @@
 package com.swvl.geometry.shapes;
 
 /**
- * Vector implementation
+ * 2D Vector implementation
  *
  * @author Hatem Morgan
  */
@@ -36,5 +36,10 @@ public class Vector {
 
     public double magnitude() {
         return Math.sqrt(x * x + y * y);
+    }
+
+    public Vector unitVector() {
+        double magnitude = this.magnitude();
+        return new Vector(this.x / magnitude, this.y / magnitude);
     }
 }
