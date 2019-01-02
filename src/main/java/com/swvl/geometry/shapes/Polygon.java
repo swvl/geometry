@@ -8,6 +8,7 @@ import javax.naming.OperationNotSupportedException;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
+import java.util.*;
 
 /**
  * Implementation of a polygon.
@@ -16,7 +17,7 @@ import java.io.IOException;
  */
 public class Polygon extends Shape {
     /*
-     * points, entered any order either clockwise or anti-clockwise.
+     * points, entered in anti-clockwise order.
      * Array is 0-based indexing with the first vertex being equal to the last vertex
      */
     public Point[] points = new Point[]{};
@@ -51,6 +52,9 @@ public class Polygon extends Shape {
         if (!points[points.length - 1].equals(points[0]))
             throw new IllegalArgumentException("First vertex and last vertex must be same");
 
+        /* check if area is negative which indicates that the points entered in CW order*/
+        if (area() < EPS)
+            throw new IllegalArgumentException("Points must be order in counter-clockwise");
 
         for (Point point : points) {
             double x = point.x;
@@ -60,6 +64,16 @@ public class Polygon extends Shape {
             minY = Math.min(minY, y);
             maxY = Math.max(maxY, y);
         }
+    }
+
+    /**
+     * returns the area, which is half the determinant
+     */
+    private double area() {
+        double area = 0.0;
+        for (int i = 0; i < points.length - 1; ++i)
+            area += points[i].x * points[i + 1].y - points[i].y * points[i + 1].x;
+        return area / 2.0;
     }
 
     @Override
@@ -141,30 +155,6 @@ public class Polygon extends Shape {
         return false;
     }
 
-
-    /**
-     * @param p 1st point
-     * @param q 2nd point
-     * @param r 3rd point
-     * @return true if the 3 points lies on the line
-     */
-    private boolean areCollinear(Point p, Point q, Point r) {
-        /* Calculate vector pq^ */
-        double pqx = q.x - p.y;
-        double pqy = q.y - p.y;
-
-        /* Calculate vector qr^ */
-        double qrx = r.x - q.x;
-        double qry = r.y - q.y;
-
-        /* Cross product between pq^ and qr^ */
-        double val = pqx * qry - pqy * qrx;
-
-        /* if val = 0 then points are collinear */
-        return Math.abs(val) < EPS;
-
-    }
-
     @Override
     public Polygon clone() {
         validate();
@@ -200,14 +190,15 @@ public class Polygon extends Shape {
         if (shape instanceof Point)
             return this.isIntersected(shape);
 
+        // TODO contains operation for conacve polygons with other shapes
         if (shape instanceof LineSegment)
             return containsLineSegment((LineSegment) shape);
-
-        if (shape instanceof Rectangle)
-            return containsRectangle((Rectangle) shape);
-
-        if (shape instanceof Polygon)
-            return containsPolygon((Polygon) shape);
+//
+//        if (shape instanceof Rectangle)
+//            return containsRectangle((Rectangle) shape);
+//
+//        if (shape instanceof Polygon)
+//            return containsPolygon((Polygon) shape);
 
         throw new OperationNotSupportedException("contains operation in Polygon does not support " + shape.getClass());
 
@@ -273,34 +264,40 @@ public class Polygon extends Shape {
         if (!containsPoints(lineSegment.p1, lineSegment.p2))
             return false;
 
-        /*
-         * Both of the end points are inside the polygon.
-         *
-         * if the line is on one of the polygon's edges then return true
-         */
+        TreeSet<Point> treeSet = new TreeSet<Point>();
+
+        /* Calculate intersection points between line segment and polygon's edges */
         LineSegment edge = new LineSegment();
         for (int i = 0; i < points.length - 1; ++i) {
             edge.set(points[i], points[i + 1]);
-            if (edge.contains(lineSegment)) // line segment on the edge
-                return true;
+            Point p = edge.getIntersectionPointIfExist(lineSegment);
+            if (p != null)
+                treeSet.add(p);
         }
+
+        if (treeSet.isEmpty()) // no edge intersection and two end points are inside polygon
+            return true;
+
+        ArrayList<Point> midPoints = new ArrayList<Point>();
 
         /*
-         * Both of the end points are inside the polygon and line segment is not on any
-         * of the polygon's edges.
-         *
-         * Check if the line segment goes out and then in the polygon (concave case)
-         * by checking for any edge intersection with the line segment.
+         * Iterate over sorted points to get the midpoints between each consecutive
+         * points. Then, check that all midpoints are inside polygon
          */
-
-        edge = new LineSegment();
-        for (int i = 0; i < points.length - 1; ++i) {
-            edge.set(points[i], points[i + 1]);
-            if (lineSegmentWithoutEndPointsIntersection(edge, lineSegment)) // edge intersects the line segment
-                return false;
+        Iterator<Point> iter = treeSet.iterator();
+        Point p1, p2 = iter.next();
+        while (iter.hasNext()) {
+            p1 = p2;
+            p2 = iter.next();
+            edge.set(p1, p2);
+            midPoints.add(edge.getCenterPoint());
         }
 
-        /* Both end points are inside polygon and the line is fully inside the polygon */
+        /* Check that all center points are inside the polygon */
+        for (Point point : midPoints)
+            if (!containsPoints(point))
+                return false;
+
         return true;
     }
 
@@ -327,11 +324,6 @@ public class Polygon extends Shape {
 
         /* Check that intersection point is on both lines */
         return l1.isIntersected(p) && l2.isIntersected(p);
-    }
-
-    @Override
-    public boolean isEdgeIntersection(Shape shape) throws OperationNotSupportedException {
-        throw new OperationNotSupportedException("isEdgeIntersection is not supported for Polygon");
     }
 
     @Override

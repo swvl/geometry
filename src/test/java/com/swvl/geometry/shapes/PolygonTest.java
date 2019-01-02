@@ -4,7 +4,6 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import javax.naming.OperationNotSupportedException;
-import javax.sound.sampled.Line;
 
 public class PolygonTest {
     private static Polygon poly1;
@@ -13,10 +12,10 @@ public class PolygonTest {
     static {
         Point[] p1Points = new Point[]{
                 new Point(0, 0),
-                new Point(0, 10),
-                new Point(5, 15),
-                new Point(10, 10),
                 new Point(10, 0),
+                new Point(10, 10),
+                new Point(5, 15),
+                new Point(0, 10),
                 new Point(0, 0)
         };
 
@@ -86,29 +85,33 @@ public class PolygonTest {
         Assert.assertFalse(poly1.isIntersected(p9));
         Assert.assertFalse(poly1.contains(p9));
 
-        Point p10 = new Point(10.21111, 11.020101); // inside polygon
-        Assert.assertTrue(poly2.isIntersected(p10));
-        Assert.assertTrue(poly2.contains(p10));
+        Point p10 = new Point(5, 10);
+        Assert.assertTrue(poly1.isIntersected(p10));
+        Assert.assertTrue(poly1.contains(p10));
 
-        Point p11 = new Point(3.221, 6.442); // on edge
+        Point p11 = new Point(10.21111, 11.020101); // inside polygon
         Assert.assertTrue(poly2.isIntersected(p11));
         Assert.assertTrue(poly2.contains(p11));
 
-        Point p12 = new Point(15.3312, 17.45311); // vertex
+        Point p12 = new Point(3.221, 6.442); // on edge
         Assert.assertTrue(poly2.isIntersected(p12));
         Assert.assertTrue(poly2.contains(p12));
 
-        Point p13 = new Point(0, 0);
-        Assert.assertFalse(poly2.isIntersected(p13));
-        Assert.assertFalse(poly2.contains(p13));
+        Point p13 = new Point(15.3312, 17.45311); // vertex
+        Assert.assertTrue(poly2.isIntersected(p13));
+        Assert.assertTrue(poly2.contains(p13));
 
-        Point p14 = new Point(6.01011, 15.1211);
+        Point p14 = new Point(0, 0);
         Assert.assertFalse(poly2.isIntersected(p14));
         Assert.assertFalse(poly2.contains(p14));
 
-        Point p15 = new Point(20, 10);
+        Point p15 = new Point(6.01011, 15.1211);
         Assert.assertFalse(poly2.isIntersected(p15));
         Assert.assertFalse(poly2.contains(p15));
+
+        Point p16 = new Point(20, 10);
+        Assert.assertFalse(poly2.isIntersected(p16));
+        Assert.assertFalse(poly2.contains(p16));
     }
 
     @Test
@@ -177,10 +180,17 @@ public class PolygonTest {
                 new Point(6, 20)); // line pass through concave part of poly2
         Assert.assertTrue(poly2.isIntersected(l13));
         Assert.assertFalse(poly2.contains(l13));
+
+        /* line intersect edges in concave part of poly2, thus it is outside poly2 */
+        LineSegment l14 = new LineSegment(new Point(4, 8),
+                new Point(6.55766, 18.055500000000002));
+        Assert.assertTrue(poly2.isIntersected(l14));
+        Assert.assertFalse(poly2.contains(l14));
+
     }
 
 
-    @Test
+    @Test(expected = OperationNotSupportedException.class)
     public void testRectangleIntersectionAndContains() throws OperationNotSupportedException {
         Rectangle rect1 = new Rectangle(5, 10, 12, 15); // minimum point inside poly1
         Assert.assertTrue(poly1.isIntersected(rect1));
@@ -229,14 +239,14 @@ public class PolygonTest {
 
     }
 
-    @Test
+    @Test(expected = OperationNotSupportedException.class)
     public void testPolygonIntersectionAndContains() throws OperationNotSupportedException {
         Point[] polyPOints1 = new Point[]{
                 new Point(-1, -1),
-                new Point(-1, 10),
-                new Point(2, 13),
-                new Point(5, 10),
                 new Point(5, -2),
+                new Point(5, 10),
+                new Point(2, 13),
+                new Point(-1, 10),
                 new Point(-1, -1)
         };
         Polygon polygon1 = new Polygon(polyPOints1); // one point inside poly1
@@ -358,5 +368,10 @@ public class PolygonTest {
         Polygon polygon10 = new Polygon(polyPoints10);
         Assert.assertTrue(poly2.isIntersected(polygon10));
         Assert.assertFalse(poly2.contains(polygon10));
+    }
+
+    public static void main(String[] args) throws OperationNotSupportedException {
+        Point p = new Point(5, 10);
+        poly1.contains(p);
     }
 }

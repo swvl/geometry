@@ -86,15 +86,6 @@ public class Point extends Shape implements WritableComparable<Point> {
         throw new OperationNotSupportedException("Check if point contains a shape is a fatal error");
     }
 
-    @Override
-    public boolean isEdgeIntersection(Shape shape) throws OperationNotSupportedException {
-        if (shape instanceof Rectangle)
-            return shape.isEdgeIntersection(this);
-
-        throw new OperationNotSupportedException("isEdgeIntersection operation in Point is not supported");
-    }
-
-
     /**
      * Returns the minimal bounding rectangle of this point. This method returns
      * the smallest rectangle that contains this point. For consistency with
@@ -146,6 +137,7 @@ public class Point extends Shape implements WritableComparable<Point> {
 
     @Override
     public int compareTo(Point pt2) {
+        /* Sort on x then y for resolving ties*/
         if (this.x - pt2.x < -EPS)
             return -1;
 
@@ -184,10 +176,8 @@ public class Point extends Shape implements WritableComparable<Point> {
         if (xDiff >= -EPS && yDiff >= EPS) // this.x = point.x && this.y > point.y
             return true;
 
-        if (xDiff >= -EPS && yDiff >= -EPS) // this.x = point.x && this.y = point.y
-            return true;
-
-        return false;
+        // this.x = point.x && this.y = point.y
+        return xDiff >= -EPS && yDiff >= -EPS;
     }
 
 
@@ -201,10 +191,8 @@ public class Point extends Shape implements WritableComparable<Point> {
         if (xDiff <= EPS && yDiff <= -EPS) // this.x = point.x && this.y < point.y
             return true;
 
-        if (xDiff <= EPS && yDiff <= EPS) // this.x = point.x && this.y = point.y
-            return true;
-
-        return false;
+        // this.x = point.x && this.y = point.y
+        return xDiff <= EPS && yDiff <= EPS;
     }
 
     public boolean isGT(Point point) {
@@ -214,10 +202,8 @@ public class Point extends Shape implements WritableComparable<Point> {
         if (xDiff >= EPS) // this.x > point.x
             return true;
 
-        if (xDiff >= -EPS && yDiff >= EPS) // this.x = point.x && this.y > point.y
-            return true;
-
-        return false;
+        // this.x = point.x && this.y > point.y
+        return xDiff >= -EPS && yDiff >= EPS;
     }
 
 
@@ -228,9 +214,11 @@ public class Point extends Shape implements WritableComparable<Point> {
         if (xDiff <= -EPS) // this.x < point.x
             return true;
 
-        if (xDiff <= EPS && yDiff <= -EPS) // this.x = point.x && this.y < point.y
-            return true;
+        // this.x = point.x && this.y < point.y
+        return xDiff <= EPS && yDiff <= -EPS;
+    }
 
-        return false;
+    public Point translate(Vector vector) {
+        return new Point(this.x + vector.x, this.y + vector.y);
     }
 }
