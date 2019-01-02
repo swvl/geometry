@@ -190,7 +190,7 @@ public class PolygonTest {
     }
 
 
-    @Test(expected = OperationNotSupportedException.class)
+    @Test
     public void testRectangleIntersectionAndContains() throws OperationNotSupportedException {
         Rectangle rect1 = new Rectangle(5, 10, 12, 15); // minimum point inside poly1
         Assert.assertTrue(poly1.isIntersected(rect1));
@@ -239,7 +239,7 @@ public class PolygonTest {
 
     }
 
-    @Test(expected = OperationNotSupportedException.class)
+    @Test
     public void testPolygonIntersectionAndContains() throws OperationNotSupportedException {
         Point[] polyPOints1 = new Point[]{
                 new Point(-1, -1),
@@ -252,18 +252,6 @@ public class PolygonTest {
         Polygon polygon1 = new Polygon(polyPOints1); // one point inside poly1
         Assert.assertTrue(poly1.isIntersected(polygon1));
         Assert.assertFalse(poly1.contains(polygon1));
-
-        Point[] polyPOints2 = new Point[]{
-                new Point(-1, -1),
-                new Point(-1, 10),
-                new Point(2, 13),
-                new Point(3, 11),
-                new Point(5, -2),
-                new Point(-1, -1)
-        };
-        Polygon polygon2 = new Polygon(polyPOints2); // edge intersection only
-        Assert.assertTrue(poly1.isIntersected(polygon2));
-        Assert.assertFalse(poly1.contains(polygon2));
 
         Point[] polyPOints3 = new Point[]{
                 new Point(1, 14),
@@ -310,12 +298,13 @@ public class PolygonTest {
 
         Point[] polyPOints6 = new Point[]{
                 new Point(0, 0),
-                new Point(0, 10),
-                new Point(5, 15),
-                new Point(10, 10),
                 new Point(10, 0),
+                new Point(10, 10),
+                new Point(5, 15),
+                new Point(0, 10),
                 new Point(0, 0)
         };
+
         Polygon polygon6 = new Polygon(polyPOints6); // same as poly1
         Assert.assertTrue(poly1.isIntersected(polygon6));
         Assert.assertTrue(poly1.contains(polygon6));
@@ -332,29 +321,6 @@ public class PolygonTest {
         Assert.assertTrue(poly1.isIntersected(polygon7));
         Assert.assertFalse(poly1.contains(polygon7));
 
-        Point[] polyPoints8 = new Point[]{
-                new Point(10, 0),
-                new Point(12, 14),
-                new Point(11, 15),
-                new Point(16, 17),
-                new Point(13, 5),
-                new Point(10, 0)
-        };
-        Polygon polygon8 = new Polygon(polyPoints8); // Same vertex
-        Assert.assertTrue(poly1.isIntersected(polygon8));
-        Assert.assertFalse(poly1.contains(polygon8));
-
-        Point[] polyPoints9 = new Point[]{
-                new Point(0, 15),
-                new Point(10, 15),
-                new Point(20, 20),
-                new Point(5, 14),
-                new Point(3, 12),
-                new Point(0, 15)
-        };
-        Polygon polygon9 = new Polygon(polyPoints9); // edge intersect vertex
-        Assert.assertTrue(poly1.isIntersected(polygon9));
-        Assert.assertFalse(poly1.contains(polygon9));
 
         Point[] polyPoints10 = new Point[]{
                 new Point(6, 5),
