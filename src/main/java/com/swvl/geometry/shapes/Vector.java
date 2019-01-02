@@ -30,10 +30,6 @@ public class Vector {
         return x * v.y - y * v.x;
     }
 
-    public Vector reverse() {
-        return new Vector(-x, -y);
-    }
-
     public double magnitude() {
         return Math.sqrt(x * x + y * y);
     }

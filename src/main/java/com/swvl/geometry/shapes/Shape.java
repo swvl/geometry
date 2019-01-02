@@ -1,11 +1,3 @@
-/***********************************************************************
- * Copyright (c) 2015 by Regents of the University of Minnesota.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Apache License, Version 2.0 which
- * accompanies this distribution and is available at
- * http://www.opensource.org/licenses/apache2.0.php.
- *
- *************************************************************************/
 package com.swvl.geometry.shapes;
 
 import com.swvl.geometry.io.TextSerializable;
@@ -67,10 +59,11 @@ public abstract class Shape implements Writable, Cloneable, TextSerializable, Se
 
 
     /**
-     * Check if the shape contains a rectangle
+     * Check if the shape contains another shape
      *
      * @param shape input shape to be tested if it is inside this shape
-     * @return <code>true</code> if this shape contains rectangle; <code>false</code> otherwise.
+     * @return <code>true</code> if this shape contains the other shape;
+     * <code>false</code> otherwise.
      */
     public abstract boolean contains(Shape shape) throws OperationNotSupportedException;
 
