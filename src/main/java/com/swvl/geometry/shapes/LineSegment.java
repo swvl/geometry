@@ -105,7 +105,7 @@ public class LineSegment extends Shape {
          * Translate point a by a scaled magnitude u of vector p1p2
          * (multiplying p1p2^ by res to get scaled vector in p1p2 direction)
          */
-        Point c = p1.traslate(p1p2.scale(res));
+        Point c = p1.translate(p1p2.scale(res));
         return p.distanceTo(c);
     }
 
