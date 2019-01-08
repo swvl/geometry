@@ -27,7 +27,7 @@ public class LineSegment implements Shape {
      * Validate the two end points of line segment are initialized and calculate
      * the line segment equation.
      */
-    private void validate() {
+    public void validate() {
         if (p1 == null || p2 == null)
             throw new IllegalArgumentException("The two points of Line Segment are not" +
                     "Initialized.");

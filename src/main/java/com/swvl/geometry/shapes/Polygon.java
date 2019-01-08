@@ -37,7 +37,7 @@ public class Polygon implements Shape {
      * Validate that points of polygon is initialized and calculate
      * the fields of the polygon.
      */
-    private void validate() {
+    public void validate() {
 
         if (points.length < 4)
             throw new IllegalArgumentException("Number of point for polygon must " +
