@@ -9,8 +9,8 @@ import java.io.Serializable;
  *
  * @author Hatem Morgan
  */
-public abstract class Shape implements Cloneable, Serializable {
-    public final static double EPS = 1e-9; // Epsilon error for comparing floating points
+public interface Shape extends Cloneable, Serializable {
+    double EPS = 1e-9; // Epsilon error for comparing floating points
 
 
     /**
@@ -18,7 +18,7 @@ public abstract class Shape implements Cloneable, Serializable {
      *
      * @return The minimum bounding rectangle for this shape
      */
-    public abstract Rectangle getMBR();
+    Rectangle getMBR();
 
     /**
      * Gets the Euclidean distance of this shape to a given point.
@@ -26,7 +26,7 @@ public abstract class Shape implements Cloneable, Serializable {
      * @param p the point
      * @return The Euclidean distance between this object and the given point
      */
-    public abstract double distanceTo(Point p) throws OperationNotSupportedException;
+    double distanceTo(Point p) throws OperationNotSupportedException;
 
     /**
      * Check for intersection of this shape with the given shape
@@ -34,14 +34,14 @@ public abstract class Shape implements Cloneable, Serializable {
      * @param s The other shape to test for intersection with this shape
      * @return <code>true</code> if this shape intersects with s; <code>false</code> otherwise.
      */
-    public abstract boolean isIntersected(final Shape s) throws OperationNotSupportedException;
+    boolean isIntersected(final Shape s) throws OperationNotSupportedException;
 
     /**
      * Clones this shape
      *
      * @return A new object which is a copy of this shape
      */
-    public abstract Shape clone();
+    Shape clone();
 
 
     /**
@@ -49,7 +49,7 @@ public abstract class Shape implements Cloneable, Serializable {
      *
      * @return Center point
      */
-    public abstract Point getCenterPoint();
+    Point getCenterPoint();
 
 
     /**
@@ -59,5 +59,5 @@ public abstract class Shape implements Cloneable, Serializable {
      * @return <code>true</code> if this shape contains the other shape;
      * <code>false</code> otherwise.
      */
-    public abstract boolean contains(Shape shape) throws OperationNotSupportedException;
+    boolean contains(Shape shape) throws OperationNotSupportedException;
 }
