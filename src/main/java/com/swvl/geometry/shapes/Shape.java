@@ -1,7 +1,5 @@
 package com.swvl.geometry.shapes;
 
-import org.apache.hadoop.io.Writable;
-
 import javax.naming.OperationNotSupportedException;
 import java.io.Serializable;
 

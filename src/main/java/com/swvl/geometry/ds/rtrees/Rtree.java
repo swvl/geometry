@@ -1,6 +1,5 @@
 package com.swvl.geometry.ds.rtrees;
 
-import org.apache.hadoop.io.Writable;
 
 /**
  * R-tree implementation. R-trees handles multi-dimensional data such as geometrical data.
