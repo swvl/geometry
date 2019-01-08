@@ -1,12 +1,8 @@
 package com.swvl.geometry.shapes;
 
-import com.swvl.geometry.io.TextSerializable;
 import org.apache.hadoop.io.Writable;
 
 import javax.naming.OperationNotSupportedException;
-import java.io.DataInput;
-import java.io.DataOutput;
-import java.io.IOException;
 import java.io.Serializable;
 
 
@@ -15,7 +11,7 @@ import java.io.Serializable;
  *
  * @author Hatem Morgan
  */
-public abstract class Shape implements Writable, Cloneable, TextSerializable, Serializable {
+public abstract class Shape implements Cloneable, Serializable {
     public final static double EPS = 1e-9; // Epsilon error for comparing floating points
 
 
@@ -66,10 +62,4 @@ public abstract class Shape implements Writable, Cloneable, TextSerializable, Se
      * <code>false</code> otherwise.
      */
     public abstract boolean contains(Shape shape) throws OperationNotSupportedException;
-
-    @Override
-    public abstract void write(DataOutput dataOutput) throws IOException;
-
-    @Override
-    public abstract void readFields(DataInput dataInput) throws IOException;
 }

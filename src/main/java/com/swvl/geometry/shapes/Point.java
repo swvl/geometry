@@ -1,21 +1,15 @@
 package com.swvl.geometry.shapes;
 
 import com.swvl.geometry.Utilities;
-import com.swvl.geometry.io.TextSerializerHelper;
-import org.apache.hadoop.io.Text;
-import org.apache.hadoop.io.WritableComparable;
 
 import javax.naming.OperationNotSupportedException;
-import java.io.DataInput;
-import java.io.DataOutput;
-import java.io.IOException;
 
 /**
  * Implementation of a point represented by x & y coordinates.
  *
  * @author Hatem Morgan
  */
-public class Point extends Shape implements WritableComparable<Point> {
+public class Point extends Shape implements Comparable<Point> {
     public double x;
     public double y;
 
@@ -41,16 +35,6 @@ public class Point extends Shape implements WritableComparable<Point> {
     public void set(double x, double y) {
         this.x = x;
         this.y = y;
-    }
-
-    public void write(DataOutput out) throws IOException {
-        out.writeDouble(x);
-        out.writeDouble(y);
-    }
-
-    public void readFields(DataInput in) throws IOException {
-        this.x = in.readDouble();
-        this.y = in.readDouble();
     }
 
     @Override
@@ -120,19 +104,6 @@ public class Point extends Shape implements WritableComparable<Point> {
     @Override
     public String toString() {
         return "Point: (" + x + "," + y + ")";
-    }
-
-    @Override
-    public Text toText(Text text) {
-        TextSerializerHelper.serializeDouble(x, text, ',');
-        TextSerializerHelper.serializeDouble(y, text, '\0');
-        return text;
-    }
-
-    @Override
-    public void fromText(Text text) {
-        x = TextSerializerHelper.consumeDouble(text, ',');
-        y = TextSerializerHelper.consumeDouble(text, '\0');
     }
 
     @Override
