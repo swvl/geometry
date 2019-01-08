@@ -1,21 +1,16 @@
 package com.swvl.geometry.shapes;
 
 import com.swvl.geometry.Utilities;
-import com.swvl.geometry.io.TextSerializerHelper;
-import org.apache.hadoop.io.Text;
-import org.apache.hadoop.io.WritableComparable;
 
 import javax.naming.OperationNotSupportedException;
-import java.io.DataInput;
-import java.io.DataOutput;
-import java.io.IOException;
+
 
 /**
  * Implementation of a rectangle.
  *
  * @author Hatem Morgan
  */
-public class Rectangle extends Shape implements WritableComparable<Rectangle> {
+public class Rectangle extends Shape implements Comparable<Rectangle> {
     public Point minPoint; // point with minimum coordinates
     public Point maxPoint; // point with maximum coordinates
 
@@ -44,21 +39,6 @@ public class Rectangle extends Shape implements WritableComparable<Rectangle> {
     public Rectangle(double x1, double y1, double x2, double y2) {
         this.minPoint = new Point(x1, y1);
         this.maxPoint = new Point(x2, y2);
-    }
-
-    public void write(DataOutput out) throws IOException {
-        validate();
-
-        minPoint.write(out);
-        maxPoint.write(out);
-    }
-
-    public void readFields(DataInput in) throws IOException {
-        minPoint = new Point();
-        minPoint.readFields(in);
-
-        maxPoint = new Point();
-        maxPoint.readFields(in);
     }
 
     @Override
@@ -338,29 +318,6 @@ public class Rectangle extends Shape implements WritableComparable<Rectangle> {
         validate();
 
         return new Point((this.minPoint.x + this.maxPoint.x) / 2, (this.minPoint.y + this.maxPoint.y) / 2);
-    }
-
-
-    @Override
-    public Text toText(Text text) {
-        validate();
-
-        TextSerializerHelper.serializeDouble(minPoint.x, text, ',');
-        TextSerializerHelper.serializeDouble(minPoint.y, text, ',');
-        TextSerializerHelper.serializeDouble(maxPoint.x, text, ',');
-        TextSerializerHelper.serializeDouble(maxPoint.y, text, '\0');
-        return text;
-    }
-
-    @Override
-    public void fromText(Text text) {
-        minPoint = new Point();
-        minPoint.x = TextSerializerHelper.consumeDouble(text, ',');
-        minPoint.y = TextSerializerHelper.consumeDouble(text, ',');
-
-        maxPoint = new Point();
-        maxPoint.x = TextSerializerHelper.consumeDouble(text, ',');
-        maxPoint.y = TextSerializerHelper.consumeDouble(text, '\0');
     }
 
     @Override

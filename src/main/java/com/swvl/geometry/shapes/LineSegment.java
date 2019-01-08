@@ -1,13 +1,8 @@
 package com.swvl.geometry.shapes;
 
 import com.swvl.geometry.Utilities;
-import com.swvl.geometry.io.TextSerializerHelper;
-import org.apache.hadoop.io.Text;
 
 import javax.naming.OperationNotSupportedException;
-import java.io.DataInput;
-import java.io.DataOutput;
-import java.io.IOException;
 
 /**
  * Implementation of a Line Segment.
@@ -187,50 +182,6 @@ public class LineSegment extends Shape {
         }
 
         throw new OperationNotSupportedException("Contains operation in LineSegment does not support " + shape.getClass());
-    }
-
-    @Override
-    public void write(DataOutput dataOutput) throws IOException {
-        validate();
-
-        p1.write(dataOutput);
-        p2.write(dataOutput);
-    }
-
-    @Override
-    public void readFields(DataInput dataInput) throws IOException {
-        p1 = new Point();
-        p1.readFields(dataInput);
-
-        p2 = new Point();
-        p2.readFields(dataInput);
-
-        validate();
-    }
-
-    @Override
-    public Text toText(Text text) {
-        validate();
-
-        TextSerializerHelper.serializeDouble(p1.x, text, ',');
-        TextSerializerHelper.serializeDouble(p1.y, text, ',');
-        TextSerializerHelper.serializeDouble(p2.x, text, ',');
-        TextSerializerHelper.serializeDouble(p2.y, text, '\0');
-
-        return text;
-    }
-
-    @Override
-    public void fromText(Text text) {
-        double x = TextSerializerHelper.consumeDouble(text, ',');
-        double y = TextSerializerHelper.consumeDouble(text, ',');
-        p1 = new Point(x, y);
-
-        x = TextSerializerHelper.consumeDouble(text, ',');
-        y = TextSerializerHelper.consumeDouble(text, '\0');
-        p2 = new Point(x, y);
-
-        validate();
     }
 
     @Override

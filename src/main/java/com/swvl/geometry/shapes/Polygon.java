@@ -1,13 +1,8 @@
 package com.swvl.geometry.shapes;
 
 import com.swvl.geometry.Utilities;
-import com.swvl.geometry.io.TextSerializerHelper;
-import org.apache.hadoop.io.Text;
 
 import javax.naming.OperationNotSupportedException;
-import java.io.DataInput;
-import java.io.DataOutput;
-import java.io.IOException;
 import java.util.*;
 
 /**
@@ -324,63 +319,6 @@ public class Polygon extends Shape {
         /* Check that intersection point is on both lines */
         return l1.isIntersected(p) && l2.isIntersected(p);
     }
-
-    @Override
-    public void write(DataOutput dataOutput) throws IOException {
-        validate();
-
-        dataOutput.writeInt(points.length);
-        for (Point point : points) point.write(dataOutput);
-    }
-
-    @Override
-    public void readFields(DataInput dataInput) throws IOException {
-        int size = dataInput.readInt();
-        points = new Point[size];
-        for (int i = 0; i < points.length; ++i) {
-            points[i] = new Point();
-            points[i].readFields(dataInput);
-        }
-    }
-
-    @Override
-    public Text toText(Text text) {
-        validate();
-
-        TextSerializerHelper.serializeInt(points.length, text, ',');
-
-        for (int i = 0; i < points.length - 1; ++i) {
-            TextSerializerHelper.serializeDouble(points[i].x, text, ',');
-            TextSerializerHelper.serializeDouble(points[i].y, text, ',');
-        }
-
-        /* Last point */
-        TextSerializerHelper.serializeDouble(points[points.length - 1].x, text, ',');
-        TextSerializerHelper.serializeDouble(points[points.length - 1].y, text, '\0');
-
-        return text;
-    }
-
-    @Override
-    public void fromText(Text text) {
-        int size = TextSerializerHelper.consumeInt(text, ',');
-        double x, y;
-        points = new Point[size];
-
-        for (int i = 0; i < points.length - 1; ++i) {
-            x = TextSerializerHelper.consumeDouble(text, ',');
-            y = TextSerializerHelper.consumeDouble(text, ',');
-            points[i] = new Point(x, y);
-        }
-
-        /* Last point*/
-        x = TextSerializerHelper.consumeDouble(text, ',');
-        y = TextSerializerHelper.consumeDouble(text, '\0');
-        points[size - 1] = new Point(x, y);
-
-        validate();
-    }
-
 
     @Override
     public boolean equals(Object obj) {
