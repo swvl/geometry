@@ -10,7 +10,7 @@ import javax.naming.OperationNotSupportedException;
  *
  * @author Hatem Morgan
  */
-public class Rectangle extends Shape implements Comparable<Rectangle> {
+public class Rectangle implements Shape, Comparable<Rectangle> {
     public Point minPoint; // point with minimum coordinates
     public Point maxPoint; // point with maximum coordinates
 

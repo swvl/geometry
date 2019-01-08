@@ -9,7 +9,7 @@ import javax.naming.OperationNotSupportedException;
  *
  * @author Hatem Morgan
  */
-public class LineSegment extends Shape {
+public class LineSegment implements Shape {
     /* End points of a Line Segment*/
     public Point p1;
     public Point p2;
