@@ -10,7 +10,7 @@ import java.util.*;
  *
  * @author Hatem Morgan
  */
-public class Polygon extends Shape {
+public class Polygon implements Shape {
     /*
      * points, entered in anti-clockwise order.
      * Array is 0-based indexing with the first vertex being equal to the last vertex

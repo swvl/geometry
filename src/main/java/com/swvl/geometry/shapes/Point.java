@@ -9,7 +9,7 @@ import javax.naming.OperationNotSupportedException;
  *
  * @author Hatem Morgan
  */
-public class Point extends Shape implements Comparable<Point> {
+public class Point implements Shape, Comparable<Point> {
     public double x;
     public double y;
 
