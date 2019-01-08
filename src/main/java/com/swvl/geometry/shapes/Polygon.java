@@ -30,7 +30,6 @@ public class Polygon implements Shape {
 
     public Polygon(Point[] points) {
         this.points = points;
-        validate();
     }
 
     /**

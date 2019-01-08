@@ -28,7 +28,6 @@ public class Rectangle implements Shape, Comparable<Rectangle> {
     public Rectangle(Point minPoint, Point maxPoint) {
         this.minPoint = minPoint;
         this.maxPoint = maxPoint;
-        validate();
     }
 
     public void set(Rectangle rect) {

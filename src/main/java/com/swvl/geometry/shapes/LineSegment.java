@@ -47,8 +47,6 @@ public class LineSegment implements Shape {
     public LineSegment(Point p1, Point p2) {
         this.p1 = p1;
         this.p2 = p2;
-
-        validate();
     }
 
     public void set(Point p1, Point p2) {
