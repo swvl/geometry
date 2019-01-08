@@ -1,6 +1,5 @@
 package com.swvl.geometry.models;
 
-import com.swvl.geometry.io.TextSerializerHelper;
 import com.swvl.geometry.shapes.Point;
 import org.apache.hadoop.io.Text;
 
